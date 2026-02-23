@@ -1,29 +1,277 @@
-RainbowGraphicDesign body{ font-family:'Poppins',sans-serif; margin:0; background:linear-gradient(135deg,#667eea,#764ba2); color:white; text-align:center; } header{ padding:20px; font-size:24px; font-weight:700; } .container{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; padding:20px; } .card{ background:rgba(255,255,255,0.15); backdrop-filter:blur(10px); padding:25px; border-radius:15px; cursor:pointer; transition:0.3s; } .card:hover{ transform:scale(1.05); } .section{ display:none; padding:20px; } canvas{ background:white; margin-top:15px; max-width:100%; border-radius:10px; touch-action: none; } input,select{ padding:8px; margin:5px; border-radius:5px; border:none; } button{ padding:10px 20px; border:none; border-radius:6px; background:#ff7b00; color:white; cursor:pointer; margin:10px; } footer{ margin-top:40px; padding:20px; background:rgba(0,0,0,0.3); } .counter{ font-size:12px; opacity:0.8; margin-top:5px; } 🌈 RainbowGraphicDesign 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RainbowGraphicDesign</title>
 
-Photo Card Generator 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 
-News Card Maker 
+<style>
+body{
+font-family:'Poppins',sans-serif;
+margin:0;
+background:linear-gradient(135deg,#667eea,#764ba2);
+color:white;
+text-align:center;
+}
 
-Poster Maker 
+header{
+padding:20px;
+font-size:24px;
+font-weight:700;
+}
 
-Frame Generator 
+.container{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+padding:20px;
+}
 
-Coming Soon 
+.card{
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:15px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.card:hover{
+transform:scale(1.05);
+}
+
+.section{
+display:none;
+padding:20px;
+}
+
+canvas{
+background:white;
+margin-top:15px;
+max-width:100%;
+border-radius:10px;
+}
+
+input,select{
+padding:8px;
+margin:5px;
+border-radius:5px;
+border:none;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:6px;
+background:#ff7b00;
+color:white;
+cursor:pointer;
+margin:10px;
+}
+
+footer{
+margin-top:40px;
+padding:20px;
+background:rgba(0,0,0,0.3);
+}
+
+.counter{
+font-size:12px;
+opacity:0.8;
+margin-top:5px;
+}
+</style>
+</head>
+
+<body>
+
+<header>🌈 RainbowGraphicDesign</header>
+
+<div class="container">
+
+<div class="card" onclick="openTool('photo')">
+Photo Card Generator
+<div class="counter" id="countPhoto"></div>
+</div>
+
+<div class="card" onclick="openTool('news')">
+News Card Maker
+<div class="counter" id="countNews"></div>
+</div>
+
+<div class="card" onclick="openTool('poster')">
+Poster Maker
+<div class="counter" id="countPoster"></div>
+</div>
+
+<div class="card" onclick="openTool('frame')">
+Frame Generator
+<div class="counter" id="countFrame"></div>
+</div>
+
+<div class="card" onclick="openTool('coming')">
+Coming Soon
+</div>
+
+</div>
 
 
-ArialPoppinsGeorgia 
-Generate Download HD Back 
+<div id="toolArea" class="section">
 
-🚀 Coming Soon
+<h2 id="toolTitle"></h2>
 
-More tools will be added in future.
+<input type="file" id="imageInput">
+<input type="file" id="logoInput"><br>
 
-Back 
+<input type="text" id="textInput" placeholder="Enter Text">
 
-RainbowGraphicDesign © 2026
+<select id="fontSelect">
+<option value="30px Arial">Arial</option>
+<option value="30px Poppins">Poppins</option>
+<option value="30px Georgia">Georgia</option>
+</select>
 
-Email: rainbowgraphic@email.com
+<input type="color" id="colorPicker" value="#ffffff"><br>
 
-All Rights Reserved
+<button onclick="generate()">Generate</button>
+<button onclick="download()">Download HD</button>
+<button onclick="goHome()">Back</button>
 
-let currentTool=""; const counters={ photo:parseInt(localStorage.getItem('photo'))||0, news:parseInt(localStorage.getItem('news'))||0, poster:parseInt(localStorage.getItem('poster'))||0, frame:parseInt(localStorage.getItem('frame'))||0 }; function updateCounters(){ countPhoto.innerText="Used "+counters.photo+" times"; countNews.innerText="Used "+counters.news+" times"; countPoster.innerText="Used "+counters.poster+" times"; countFrame.innerText="Used "+counters.frame+" times"; } updateCounters(); function openTool(tool){ if(tool==="coming"){document.getElementById("coming").style.display="block"; return;} currentTool=tool; document.querySelector(".container").style.display="none"; toolArea.style.display="block"; toolTitle.innerText=tool.toUpperCase()+" Generator"; } // Canvas drag variables let canvas=document.getElementById("canvas"); let ctx=canvas.getContext("2d"); let draggingText=false; let dragOffsetX=0, dragOffsetY=0; let textPos={x:100,y:1000}; let textValue="", textFont="", textColor=""; let logo=null, logoPos={x:850,y:50}, draggingLogo=false; canvas.addEventListener('pointerdown', e=>{ const rect=canvas.getBoundingClientRect(); const x=(e.clientX-rect.left)*(canvas.width/rect.width); const y=(e.clientY-rect.top)*(canvas.height/rect.height); if(x>textPos.x && x<textPos.x+ctx.measureText(textValue).width && y>textPos.y-30 && y<textPos.y){ draggingText=true; dragOffsetX=x-textPos.x; dragOffsetY=y-textPos.y; }else if(logo && x>logoPos.x && x<logoPos.x+logo.width && y>logoPos.y && y<logoPos.y+logo.height){ draggingLogo=true; dragOffsetX=x-logoPos.x; dragOffsetY=y-logoPos.y; } }); canvas.addEventListener('pointermove', e=>{ if(draggingText||draggingLogo){ const rect=canvas.getBoundingClientRect(); const x=(e.clientX-rect.left)*(canvas.width/rect.width); const y=(e.clientY-rect.top)*(canvas.height/rect.height); if(draggingText){ textPos.x=x-dragOffsetX; textPos.y=y-dragOffsetY; redrawCanvas();} if(draggingLogo){ logoPos.x=x-dragOffsetX; logoPos.y=y-dragOffsetY; redrawCanvas();} } }); canvas.addEventListener('pointerup', e=>{ draggingText=false; draggingLogo=false;}); function generate(){ const imgFile=imageInput.files[0]; const logoFile=logoInput.files[0]; textValue=textInput.value; textFont=fontSelect.value; textColor=colorPicker.value; logo=null; if(!imgFile)return alert("Please select image"); const img=new Image(); img.onload=function(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0,1080,1080); if(logoFile){ logo=new Image(); logo.onload=function(){ redrawCanvas(); } logo.src=URL.createObjectURL(logoFile); } textPos={x:100,y:1000}; redrawCanvas(); } img.src=URL.createObjectURL(imgFile); counters[currentTool]++; localStorage.setItem(currentTool,counters[currentTool]); updateCounters(); } function redrawCanvas(){ ctx.clearRect(0,0,canvas.width,canvas.height); if(imageInput.files[0]){ const img=new Image(); img.onload=function(){ ctx.drawImage(img,0,0,1080,1080); drawTextLogo(); } img.src=URL.createObjectURL(imageInput.files[0]); } else { drawTextLogo(); } } function drawTextLogo(){ if(textValue){ ctx.fillStyle=textColor; ctx.font=textFont; ctx.fillText(textValue,textPos.x,textPos.y); } if(logo){ ctx.drawImage(logo,logoPos.x,logoPos.y,180,180); } } function download(){ const link=document.createElement("a"); link.download="RainbowDesign.png"; link.href=canvas.toDataURL(); link.click(); } function goHome(){ document.querySelector(".container").style.display="grid"; toolArea.style.display="none"; coming.style.display="none"; }
+<br>
+
+<canvas id="canvas" width="1080" height="1080"></canvas>
+
+</div>
+
+
+<div id="coming" class="section">
+<h2>🚀 Coming Soon</h2>
+<p>More tools will be added in future.</p>
+<button onclick="goHome()">Back</button>
+</div>
+
+
+<footer>
+<p>RainbowGraphicDesign © 2026</p>
+<p>Email: rainbowgraphic@email.com</p>
+<p>All Rights Reserved</p>
+</footer>
+
+
+<script>
+
+let currentTool="";
+
+const counters={
+photo:localStorage.getItem('photo')||0,
+news:localStorage.getItem('news')||0,
+poster:localStorage.getItem('poster')||0,
+frame:localStorage.getItem('frame')||0
+};
+
+function updateCounters(){
+countPhoto.innerText="Used "+counters.photo+" times";
+countNews.innerText="Used "+counters.news+" times";
+countPoster.innerText="Used "+counters.poster+" times";
+countFrame.innerText="Used "+counters.frame+" times";
+}
+
+updateCounters();
+
+
+function openTool(tool){
+
+if(tool==="coming"){
+document.getElementById("coming").style.display="block";
+return;
+}
+
+currentTool=tool;
+
+document.querySelector(".container").style.display="none";
+toolArea.style.display="block";
+
+toolTitle.innerText=tool.toUpperCase()+" Generator";
+
+}
+
+
+function goHome(){
+document.querySelector(".container").style.display="grid";
+toolArea.style.display="none";
+coming.style.display="none";
+}
+
+
+function generate(){
+
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+const imgFile=imageInput.files[0];
+const logoFile=logoInput.files[0];
+
+if(!imgFile){
+alert("Please upload an image");
+return;
+}
+
+const text=textInput.value;
+const font=fontSelect.value;
+const color=colorPicker.value;
+
+const img=new Image();
+
+img.onload=function(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.drawImage(img,0,0,1080,1080);
+
+ctx.fillStyle=color;
+ctx.font=font;
+ctx.fillText(text,100,1000);
+
+if(logoFile){
+
+const logo=new Image();
+
+logo.onload=function(){
+ctx.drawImage(logo,850,50,180,180);
+}
+
+logo.src=URL.createObjectURL(logoFile);
+
+}
+
+}
+
+img.src=URL.createObjectURL(imgFile);
+
+
+counters[currentTool]++;
+localStorage.setItem(currentTool,counters[currentTool]);
+updateCounters();
+
+}
+
+
+function download(){
+
+const canvas=document.getElementById("canvas");
+
+const link=document.createElement("a");
+
+link.download="RainbowDesign.png";
+link.href=canvas.toDataURL();
+
+link.click();
+
+}
+
+</script>
+
+</body>
+</html>
