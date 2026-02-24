@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RainbowGraphicDesign</title>
+<title>Rainbow Graphic Design</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
 body{font-family:'Poppins',sans-serif;margin:0;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;}
@@ -32,6 +32,115 @@ Eid Poster Generator
 
 <div class="card" onclick="openTool('photo')">
 Photo Card Generator
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+<script>
+// Counters
+counters.ultra = localStorage.getItem('ultra')||0;
+document.getElementById("countUltra").innerText="Used "+counters.ultra+" times";
+
+// Open Tool override
+function openTool(tool){
+document.querySelectorAll('.section').forEach(sec=>sec.style.display='none');
+if(tool==='coming'){document.getElementById('coming').style.display='block';return;}
+if(tool==='eid'){document.getElementById('toolAreaEid').style.display='block';currentTool='eid';return;}
+if(tool==='ultraPhoto'){document.getElementById('toolAreaUltra').style.display='block';currentTool='ultra';return;}
+currentTool=tool;
+document.getElementById('toolArea').style.display='block';
+document.getElementById('toolTitle').innerText=tool.toUpperCase()+" Generator";
+}
+
+// Ultra Photo Card JS with Drag-able Text
+const ultraCanvas = document.getElementById("ultraCanvas");
+const ultraCtx = ultraCanvas.getContext("2d");
+const ultraImageInput = document.getElementById("ultraImageInput");
+const ultraBlurRange = document.getElementById("ultraBlurRange");
+
+let ultraElements = [];
+
+ultraImageInput.onchange = e=>{
+const file = e.target.files[0];
+if(file){
+const img = new Image();
+img.onload = ()=>{
+ultraCanvas.backgroundImg = img;
+redrawUltraCanvas();
+};
+img.src = URL.createObjectURL(file);
+}
+};
+
+ultraBlurRange.oninput = e=>{
+redrawUltraCanvas();
+};
+
+function ultraAddText(){
+const txt = document.getElementById("ultraTextInput").value;
+if(!txt) return;
+const color = document.getElementById("ultraColorPicker").value;
+const stroke = document.getElementById("ultraStrokeColor").value;
+const font = document.getElementById("ultraFontSelect").value;
+const size = document.getElementById("ultraFontSize").value;
+const div = document.createElement("div");
+div.className = "ultra-text";
+div.innerText = txt;
+div.style.position = "absolute";
+div.style.top = "100px";
+div.style.left = "100px";
+div.style.color = color;
+div.style.fontFamily = font;
+div.style.fontSize = size+"px";
+div.style.webkitTextStroke = `2px ${stroke}`;
+div.style.cursor = "move";
+ultraCanvas.parentElement.appendChild(div);
+
+// make draggable
+interact(div).draggable({
+listeners:{
+move(event){
+const target = event.target;
+const x = (parseFloat(target.getAttribute('data-x'))||0) + event.dx;
+const y = (parseFloat(target.getAttribute('data-y'))||0) + event.dy;
+target.style.transform = `translate(${x}px, ${y}px)`;
+target.setAttribute('data-x', x);
+target.setAttribute('data-y', y);
+}
+}
+});
+
+ultraElements.push({div,color,stroke,font,size});
+counters.ultra++; localStorage.setItem('ultra',counters.ultra);document.getElementById("countUltra").innerText="Used "+counters.ultra+" times";
+document.getElementById("ultraTextInput").value = "";
+}
+
+// redraw background only; texts are separate divs
+function redrawUltraCanvas(){
+ultraCtx.clearRect(0,0,ultraCanvas.width,ultraCanvas.height);
+ultraCtx.filter = `blur(${ultraBlurRange.value}px)`;
+if(ultraCanvas.backgroundImg) ultraCtx.drawImage(ultraCanvas.backgroundImg,0,0,ultraCanvas.width,ultraCanvas.height);
+ultraCtx.filter = 'none';
+}
+
+// download functions
+function ultraDownloadPNG(){
+html2canvas(ultraCanvas.parentElement).then(canvas=>{
+const link=document.createElement("a");
+link.download="UltraCard.png";
+link.href=canvas.toDataURL("image/png");
+link.click();
+});
+}
+
+function ultraDownloadJPG(){
+html2canvas(ultraCanvas.parentElement).then(canvas=>{
+const link=document.createElement("a");
+link.download="UltraCard.jpg";
+link.href=canvas.toDataURL("image/jpeg",1.0);
+link.click();
+});
+}
+</script>
 <div class="counter" id="countPhoto"></div>
 </div>
 <div class="card" onclick="openTool('news')">
@@ -161,3 +270,4 @@ const blob=await response.blob();return new Promise(resolve=>{const img=new Imag
 </script>
 </body>
 </html>
+
