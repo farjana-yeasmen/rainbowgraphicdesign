@@ -1,0 +1,105 @@
+<script>
+
+const canvas = document.getElementById("posterCanvas");
+const ctx = canvas.getContext("2d");
+
+let generated = false;
+
+// ===== DEFAULT EXAMPLE LOAD =====
+const defaultImage = new Image();
+defaultImage.src = "eid-default.jpg";
+
+defaultImage.onload = function(){
+  ctx.drawImage(defaultImage,0,0,1080,1080);
+};
+
+function generatePoster(){
+
+  const file = document.getElementById("photoInput").files[0];
+  const name = document.getElementById("nameInput").value.trim();
+  const designation = document.getElementById("designationInput").value.trim();
+
+  if(!file || !name || !designation){
+    alert("Please upload photo, name and designation");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+
+    const userImg = new Image();
+    userImg.onload = function(){
+
+      const template = new Image();
+      template.src = "eid-template.jpg";
+
+      template.onload = function(){
+
+        ctx.clearRect(0,0,1080,1080);
+        ctx.drawImage(template,0,0,1080,1080);
+
+        // AUTO SQUARE CROP
+        let size = Math.min(userImg.width, userImg.height);
+        let sx = (userImg.width - size) / 2;
+        let sy = (userImg.height - size) / 2;
+
+        let imageX = 120;
+        let imageY = 520;
+        let imageSize = 420;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(imageX + imageSize/2, imageY + imageSize/2, imageSize/2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(userImg, sx, sy, size, size, imageX, imageY, imageSize, imageSize);
+        ctx.restore();
+
+        ctx.textAlign = "left";
+        ctx.fillStyle = "black";
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 8;
+
+        let fontSize = 65;
+        ctx.font = "bold " + fontSize + "px Arial";
+
+        while(ctx.measureText(name).width > 400){
+          fontSize -= 2;
+          ctx.font = "bold " + fontSize + "px Arial";
+        }
+
+        let nameX = 600;
+        let nameY = 880;
+        let designationY = 940;
+
+        ctx.strokeText(name,nameX,nameY);
+        ctx.fillText(name,nameX,nameY);
+
+        ctx.font = "45px Arial";
+        ctx.strokeText(designation,nameX,designationY);
+        ctx.fillText(designation,nameX,designationY);
+
+        generated = true;
+
+      }
+    }
+    userImg.src = e.target.result;
+  }
+
+  reader.readAsDataURL(file);
+}
+
+function downloadPoster(){
+  if(!generated){
+    alert("Please generate first");
+    return;
+  }
+
+  const link = document.createElement("a");
+  link.download = "eid-poster.jpg";
+  link.href = canvas.toDataURL("image/jpeg",1.0);
+  link.click();
+}
+
+</script>
