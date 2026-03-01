@@ -1,95 +1,200 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Eid Poster Generator</title>
+<title>Eid Poster Generator Pro</title>
+
 <style>
-body{font-family:'Poppins',sans-serif;text-align:center;background:#f8fafc;}
-canvas{border:1px solid #ddd;margin-top:20px;border-radius:10px;}
-input,button{padding:10px;margin:10px;border-radius:6px;}
-button{background:#e11d48;color:white;border:none;cursor:pointer;}
+body{
+    font-family: Arial;
+    background:#f2f2f2;
+    text-align:center;
+}
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+.controls{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+input, select{
+    width:100%;
+    margin-bottom:12px;
+}
+canvas{
+    max-width:100%;
+    border-radius:12px;
+    cursor:grab;
+}
+button{
+    padding:12px 25px;
+    background:#0a7c4a;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
-<h1>Eid Poster Generator</h1>
+<div class="container">
+<h2>Eid Poster Generator Pro</h2>
 
-<input type="file" id="photoInput" accept="image/*"><br>
-<input type="text" id="nameInput" placeholder="Enter Name"><br>
-<input type="text" id="designationInput" placeholder="Enter Designation"><br>
-<button onclick="generatePoster()">Generate</button>
-<button onclick="downloadPoster()">Download JPEG</button><br>
+<div class="controls">
 
-<canvas id="posterCanvas" width="1080" height="1080"></canvas>
+<input type="file" id="photo">
+
+<input type="text" id="name" placeholder="Enter Name">
+<input type="text" id="designation" placeholder="Enter Designation">
+
+<label>Name Y Position</label>
+<input type="range" id="nameY" min="200" max="1000" value="650">
+
+<label>Name Font Size</label>
+<input type="range" id="nameSize" min="20" max="100" value="60">
+
+<label>Designation Y Position</label>
+<input type="range" id="desigY" min="200" max="1100" value="730">
+
+<label>Designation Font Size</label>
+<input type="range" id="desigSize" min="15" max="60" value="30">
+
+<label>Photo Size</label>
+<input type="range" id="photoSize" min="100" max="600" value="300">
+
+<label>Photo Shape</label>
+<select id="photoShape">
+<option value="circle">Circle</option>
+<option value="square">Square</option>
+</select>
+
+<button onclick="downloadPoster()">Download Poster</button>
+
+</div>
+
+<canvas id="canvas"></canvas>
+</div>
 
 <script>
-const canvas = document.getElementById("posterCanvas");
+
+const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-let generated = false;
 
-const defaultImage = new Image();
-defaultImage.src = "eid-default.jpg";
-defaultImage.onload = function(){ ctx.drawImage(defaultImage,0,0,1080,1080); };
+const template = new Image();
+template.src = "eid-template.jpg";
 
-function generatePoster(){
-  const file = document.getElementById("photoInput").files[0];
-  const name = document.getElementById("nameInput").value.trim();
-  const designation = document.getElementById("designationInput").value.trim();
-  if(!file || !name || !designation){ alert("Please fill all fields"); return; }
+let userImage = new Image();
 
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const userImg = new Image();
-    userImg.onload = function(){
-      const template = new Image();
-      template.src = "eid-template.jpg";
-      template.onload = function(){
-        ctx.clearRect(0,0,1080,1080);
-        ctx.drawImage(template,0,0,1080,1080);
+let photoX = 350;
+let photoY = 200;
+let dragging = false;
 
-        // Crop user image to square
-        let size = Math.min(userImg.width,userImg.height);
-        let sx = (userImg.width - size)/2;
-        let sy = (userImg.height - size)/2;
-        let imageX=120,imageY=520,imageSize=420;
+document.getElementById("photo").addEventListener("change", function(e){
+    const reader = new FileReader();
+    reader.onload = function(event){
+        userImage.src = event.target.result;
+        drawPoster();
+    }
+    reader.readAsDataURL(e.target.files[0]);
+});
+
+document.querySelectorAll("input, select").forEach(el=>{
+    el.addEventListener("input", drawPoster);
+});
+
+function autoFit(text, maxWidth, size){
+    while(size > 10){
+        ctx.font = "bold " + size + "px Arial";
+        if(ctx.measureText(text).width <= maxWidth){
+            return size;
+        }
+        size--;
+    }
+    return size;
+}
+
+function drawPoster(){
+
+    canvas.width = template.width;
+    canvas.height = template.height;
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(template,0,0);
+
+    const photoSize = parseInt(document.getElementById("photoSize").value);
+    const shape = document.getElementById("photoShape").value;
+
+    if(userImage.src){
 
         ctx.save();
-        ctx.beginPath();
-        ctx.arc(imageX+imageSize/2,imageY+imageSize/2,imageSize/2,0,Math.PI*2);
-        ctx.closePath();
-        ctx.clip();
-        ctx.drawImage(userImg,sx,sy,size,size,imageX,imageY,imageSize,imageSize);
+
+        if(shape === "circle"){
+            ctx.beginPath();
+            ctx.arc(photoX + photoSize/2, photoY + photoSize/2, photoSize/2, 0, Math.PI*2);
+            ctx.closePath();
+            ctx.clip();
+        }
+
+        ctx.shadowColor="black";
+        ctx.shadowBlur=20;
+
+        ctx.drawImage(userImage, photoX, photoY, photoSize, photoSize);
+
         ctx.restore();
-
-        ctx.textAlign="left";
-        ctx.fillStyle="black";
-        ctx.strokeStyle="white";
-        ctx.lineWidth=8;
-
-        let fontSize=65;
-        ctx.font="bold "+fontSize+"px Arial";
-        while(ctx.measureText(name).width>400){ fontSize-=2; ctx.font="bold "+fontSize+"px Arial"; }
-
-        let nameX=600,nameY=880,designationY=940;
-        ctx.strokeText(name,nameX,nameY); ctx.fillText(name,nameX,nameY);
-        ctx.font="45px Arial"; ctx.strokeText(designation,nameX,designationY); ctx.fillText(designation,nameX,designationY);
-
-        generated=true;
-      }
     }
-    userImg.src=e.target.result;
-  }
-  reader.readAsDataURL(file);
+
+    ctx.fillStyle="white";
+    ctx.textAlign="center";
+
+    const name = document.getElementById("name").value;
+    const designation = document.getElementById("designation").value;
+
+    let nameSize = parseInt(document.getElementById("nameSize").value);
+    let nameY = parseInt(document.getElementById("nameY").value);
+
+    nameSize = autoFit(name, 900, nameSize);
+
+    ctx.font="bold "+nameSize+"px Arial";
+    ctx.fillText(name, canvas.width/2, nameY);
+
+    let desigSize = parseInt(document.getElementById("desigSize").value);
+    let desigY = parseInt(document.getElementById("desigY").value);
+
+    ctx.font=desigSize+"px Arial";
+    ctx.fillText(designation, canvas.width/2, desigY);
 }
+
+template.onload = drawPoster;
+
+canvas.addEventListener("mousedown", function(e){
+    dragging = true;
+});
+
+canvas.addEventListener("mouseup", function(){
+    dragging = false;
+});
+
+canvas.addEventListener("mousemove", function(e){
+    if(dragging){
+        const rect = canvas.getBoundingClientRect();
+        photoX = e.clientX - rect.left - 150;
+        photoY = e.clientY - rect.top - 150;
+        drawPoster();
+    }
+});
 
 function downloadPoster(){
-  if(!generated){ alert("Please generate first"); return; }
-  const link=document.createElement("a");
-  link.download="eid-poster.jpg";
-  link.href=canvas.toDataURL("image/jpeg",1.0);
-  link.click();
+    const link=document.createElement("a");
+    link.download="eid-poster.png";
+    link.href=canvas.toDataURL("image/png",1.0);
+    link.click();
 }
+
 </script>
 
 </body>
