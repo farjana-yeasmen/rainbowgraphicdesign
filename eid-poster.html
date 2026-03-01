@@ -2,40 +2,53 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Eid Poster Generator Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eid Poster Generator</title>
 
 <style>
 body{
     font-family: Arial;
     background:#f2f2f2;
+    margin:0;
+    padding:10px;
     text-align:center;
 }
+
 .container{
-    max-width:1000px;
+    max-width:500px;
     margin:auto;
 }
+
+.logo{
+    width:120px;
+    margin:10px auto;
+}
+
 .controls{
     background:white;
-    padding:20px;
+    padding:15px;
     border-radius:12px;
-    margin-bottom:20px;
+    margin-bottom:15px;
 }
+
 input, select{
     width:100%;
-    margin-bottom:12px;
+    margin-bottom:10px;
 }
+
 canvas{
-    max-width:100%;
+    width:100%;
     border-radius:12px;
-    cursor:grab;
 }
+
 button{
-    padding:12px 25px;
+    width:100%;
+    padding:12px;
     background:#0a7c4a;
     color:white;
     border:none;
     border-radius:8px;
-    cursor:pointer;
+    font-size:16px;
 }
 </style>
 </head>
@@ -43,7 +56,8 @@ button{
 <body>
 
 <div class="container">
-<h2>Eid Poster Generator Pro</h2>
+
+<img src="logo.png" class="logo">
 
 <div class="controls">
 
@@ -52,32 +66,35 @@ button{
 <input type="text" id="name" placeholder="Enter Name">
 <input type="text" id="designation" placeholder="Enter Designation">
 
-<label>Name Y Position</label>
-<input type="range" id="nameY" min="200" max="1000" value="650">
+<label>Text Color</label>
+<select id="textColor">
+<option value="white">White</option>
+<option value="black">Black</option>
+<option value="#FFD700">Gold</option>
+<option value="#00FFFF">Cyan</option>
+</select>
 
-<label>Name Font Size</label>
-<input type="range" id="nameSize" min="20" max="100" value="60">
+<label>Name Y Position</label>
+<input type="range" id="nameY" min="200" max="1200" value="750">
 
 <label>Designation Y Position</label>
-<input type="range" id="desigY" min="200" max="1100" value="730">
+<input type="range" id="desigY" min="200" max="1300" value="830">
 
-<label>Designation Font Size</label>
-<input type="range" id="desigSize" min="15" max="60" value="30">
+<label>Photo X Position</label>
+<input type="range" id="photoX" min="0" max="800" value="200">
+
+<label>Photo Y Position</label>
+<input type="range" id="photoY" min="0" max="1000" value="250">
 
 <label>Photo Size</label>
-<input type="range" id="photoSize" min="100" max="600" value="300">
-
-<label>Photo Shape</label>
-<select id="photoShape">
-<option value="circle">Circle</option>
-<option value="square">Square</option>
-</select>
+<input type="range" id="photoSize" min="100" max="500" value="250">
 
 <button onclick="downloadPoster()">Download Poster</button>
 
 </div>
 
 <canvas id="canvas"></canvas>
+
 </div>
 
 <script>
@@ -89,10 +106,6 @@ const template = new Image();
 template.src = "eid-template.jpg";
 
 let userImage = new Image();
-
-let photoX = 350;
-let photoY = 200;
-let dragging = false;
 
 document.getElementById("photo").addEventListener("change", function(e){
     const reader = new FileReader();
@@ -120,73 +133,46 @@ function autoFit(text, maxWidth, size){
 
 function drawPoster(){
 
-    canvas.width = template.width;
-    canvas.height = template.height;
+    canvas.width = 800;
+    canvas.height = 1400;
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(template,0,0);
+    ctx.drawImage(template,0,0,canvas.width,canvas.height);
 
+    const photoX = parseInt(document.getElementById("photoX").value);
+    const photoY = parseInt(document.getElementById("photoY").value);
     const photoSize = parseInt(document.getElementById("photoSize").value);
-    const shape = document.getElementById("photoShape").value;
 
     if(userImage.src){
-
         ctx.save();
-
-        if(shape === "circle"){
-            ctx.beginPath();
-            ctx.arc(photoX + photoSize/2, photoY + photoSize/2, photoSize/2, 0, Math.PI*2);
-            ctx.closePath();
-            ctx.clip();
-        }
-
-        ctx.shadowColor="black";
-        ctx.shadowBlur=20;
+        ctx.beginPath();
+        ctx.arc(photoX + photoSize/2, photoY + photoSize/2, photoSize/2, 0, Math.PI*2);
+        ctx.closePath();
+        ctx.clip();
 
         ctx.drawImage(userImage, photoX, photoY, photoSize, photoSize);
-
         ctx.restore();
     }
 
-    ctx.fillStyle="white";
-    ctx.textAlign="center";
+    const color = document.getElementById("textColor").value;
+    ctx.fillStyle = color;
+    ctx.textAlign = "center";
 
     const name = document.getElementById("name").value;
     const designation = document.getElementById("designation").value;
 
-    let nameSize = parseInt(document.getElementById("nameSize").value);
-    let nameY = parseInt(document.getElementById("nameY").value);
-
-    nameSize = autoFit(name, 900, nameSize);
-
+    let nameSize = autoFit(name, 700, 60);
     ctx.font="bold "+nameSize+"px Arial";
-    ctx.fillText(name, canvas.width/2, nameY);
+    ctx.fillText(name, canvas.width/2, document.getElementById("nameY").value);
 
-    let desigSize = parseInt(document.getElementById("desigSize").value);
-    let desigY = parseInt(document.getElementById("desigY").value);
+    ctx.font="30px Arial";
+    ctx.fillText(designation, canvas.width/2, document.getElementById("desigY").value);
 
-    ctx.font=desigSize+"px Arial";
-    ctx.fillText(designation, canvas.width/2, desigY);
+    ctx.font="25px Arial";
+    ctx.fillText("Thank You & Eid Mubarak", canvas.width/2, photoY + photoSize + 60);
 }
 
 template.onload = drawPoster;
-
-canvas.addEventListener("mousedown", function(e){
-    dragging = true;
-});
-
-canvas.addEventListener("mouseup", function(){
-    dragging = false;
-});
-
-canvas.addEventListener("mousemove", function(e){
-    if(dragging){
-        const rect = canvas.getBoundingClientRect();
-        photoX = e.clientX - rect.left - 150;
-        photoY = e.clientY - rect.top - 150;
-        drawPoster();
-    }
-});
 
 function downloadPoster(){
     const link=document.createElement("a");
