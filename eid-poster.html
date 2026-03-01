@@ -7,27 +7,27 @@
 
 <style>
 body{
-    font-family: Arial;
-    background:#f2f2f2;
     margin:0;
-    padding:10px;
-    text-align:center;
+    font-family: Arial, sans-serif;
+    background:#f4f4f4;
 }
 
 .container{
-    max-width:500px;
+    max-width:480px;
     margin:auto;
+    padding:15px;
 }
 
 .logo{
-    width:120px;
-    margin:10px auto;
+    width:110px;
+    display:block;
+    margin:10px auto 20px;
 }
 
 .controls{
     background:white;
     padding:15px;
-    border-radius:12px;
+    border-radius:10px;
     margin-bottom:15px;
 }
 
@@ -36,9 +36,10 @@ input, select{
     margin-bottom:10px;
 }
 
-canvas{
-    width:100%;
-    border-radius:12px;
+label{
+    font-size:14px;
+    display:block;
+    margin-bottom:4px;
 }
 
 button{
@@ -47,8 +48,15 @@ button{
     background:#0a7c4a;
     color:white;
     border:none;
-    border-radius:8px;
+    border-radius:6px;
     font-size:16px;
+    cursor:pointer;
+}
+
+canvas{
+    width:100%;
+    height:auto;
+    border-radius:10px;
 }
 </style>
 </head>
@@ -71,23 +79,23 @@ button{
 <option value="white">White</option>
 <option value="black">Black</option>
 <option value="#FFD700">Gold</option>
-<option value="#00FFFF">Cyan</option>
+<option value="#0a7c4a">Green</option>
 </select>
 
-<label>Name Y Position</label>
-<input type="range" id="nameY" min="200" max="1200" value="750">
+<label>Name Position (Up / Down)</label>
+<input type="range" id="nameY" min="0" max="1080" value="750">
 
-<label>Designation Y Position</label>
-<input type="range" id="desigY" min="200" max="1300" value="830">
+<label>Designation Position (Up / Down)</label>
+<input type="range" id="desigY" min="0" max="1080" value="900">
 
 <label>Photo X Position</label>
-<input type="range" id="photoX" min="0" max="800" value="200">
+<input type="range" id="photoX" min="0" max="1080" value="300">
 
 <label>Photo Y Position</label>
-<input type="range" id="photoY" min="0" max="1000" value="250">
+<input type="range" id="photoY" min="0" max="1080" value="250">
 
 <label>Photo Size</label>
-<input type="range" id="photoSize" min="100" max="500" value="250">
+<input type="range" id="photoSize" min="100" max="600" value="350">
 
 <button onclick="downloadPoster()">Download Poster</button>
 
@@ -133,11 +141,11 @@ function autoFit(text, maxWidth, size){
 
 function drawPoster(){
 
-    canvas.width = 800;
-    canvas.height = 1400;
+    canvas.width = template.width;
+    canvas.height = template.height;
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(template,0,0,canvas.width,canvas.height);
+    ctx.drawImage(template,0,0);
 
     const photoX = parseInt(document.getElementById("photoX").value);
     const photoY = parseInt(document.getElementById("photoY").value);
@@ -149,7 +157,6 @@ function drawPoster(){
         ctx.arc(photoX + photoSize/2, photoY + photoSize/2, photoSize/2, 0, Math.PI*2);
         ctx.closePath();
         ctx.clip();
-
         ctx.drawImage(userImage, photoX, photoY, photoSize, photoSize);
         ctx.restore();
     }
@@ -161,23 +168,23 @@ function drawPoster(){
     const name = document.getElementById("name").value;
     const designation = document.getElementById("designation").value;
 
-    let nameSize = autoFit(name, 700, 60);
-    ctx.font="bold "+nameSize+"px Arial";
-    ctx.fillText(name, canvas.width/2, document.getElementById("nameY").value);
+    let nameSize = autoFit(name, 900, 60);
+    let nameY = parseInt(document.getElementById("nameY").value);
 
-    ctx.font="30px Arial";
-    ctx.fillText(designation, canvas.width/2, document.getElementById("desigY").value);
+    ctx.font = "bold " + nameSize + "px Arial";
+    ctx.fillText(name, canvas.width/2, nameY);
 
-    ctx.font="25px Arial";
-    ctx.fillText("Thank You & Eid Mubarak", canvas.width/2, photoY + photoSize + 60);
+    let desigY = parseInt(document.getElementById("desigY").value);
+    ctx.font = "30px Arial";
+    ctx.fillText(designation, canvas.width/2, desigY);
 }
 
 template.onload = drawPoster;
 
 function downloadPoster(){
-    const link=document.createElement("a");
-    link.download="eid-poster.png";
-    link.href=canvas.toDataURL("image/png",1.0);
+    const link = document.createElement("a");
+    link.download = "eid-poster.png";
+    link.href = canvas.toDataURL("image/png",1.0);
     link.click();
 }
 
