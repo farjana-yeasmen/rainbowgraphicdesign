@@ -2,69 +2,97 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BNP Eid Poster Tool - Advanced Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BNP Eid Poster - Mobile Friendly</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    
     <style>
-        :root { --primary: #28a745; --blue: #1e3a8a; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .container { max-width: 800px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); }
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+        :root { --primary: #28a745; --bg-gray: #f8f9fa; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg-gray); margin: 0; padding: 10px; color: #333; }
         
-        .controls { text-align: left; padding: 10px; background: #fafafa; border-radius: 10px; border: 1px solid #eee; }
-        .control-group { margin-bottom: 15px; border-bottom: 1px dashed #ddd; padding-bottom: 10px; }
-        label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #333; }
-        input[type="range"] { width: 100%; accent-color: var(--primary); }
-        input[type="text"], input[type="file"] { width: 100%; padding: 8px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        /* মেইন কন্টেইনার */
+        .wrapper { max-width: 100%; margin: auto; display: flex; flex-direction: column; gap: 15px; }
         
-        .preview-area { position: sticky; top: 20px; text-align: center; }
-        canvas { width: 100%; height: auto; border-radius: 10px; border: 3px solid #ddd; background: #eee; }
+        /* প্রিভিউ এরিয়া - মোবাইলে সবার উপরে থাকবে */
+        .preview-box { position: sticky; top: 0; z-index: 10; background: var(--bg-gray); padding-bottom: 10px; border-bottom: 2px solid #ddd; }
+        canvas { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: #fff; }
+
+        /* কন্ট্রোল প্যানেল */
+        .editor-card { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h3 { margin-top: 0; color: var(--blue); font-size: 18px; text-align: center; }
+
+        .input-item { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #555; }
         
-        .img-container { width: 100%; max-height: 300px; margin-bottom: 10px; overflow: hidden; display: none; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; margin-top: 10px; }
+        input[type="text"], input[type="file"] { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box;
+        }
+
+        /* স্লাইডার স্টাইল */
+        input[type="range"] { 
+            width: 100%; height: 6px; background: #ddd; border-radius: 5px; outline: none; accent-color: var(--primary); margin: 10px 0;
+        }
+
+        /* ক্রপার এরিয়া */
+        .img-container { width: 100%; max-height: 250px; overflow: hidden; margin-top: 10px; border-radius: 8px; display: none; }
+
+        .btn-action { 
+            width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; 
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
         .btn-download { background: #007bff; color: white; }
+        .btn-download:active { background: #0056b3; }
+
+        .hint { font-size: 11px; color: #888; text-align: center; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="controls">
-        <h3>এডিটিং প্যানেল</h3>
-        
-        <div class="control-group">
-            <label>১. ছবি ও ক্রপিং</label>
+<div class="wrapper">
+    <div class="preview-box">
+        <canvas id="posterCanvas" width="1080" height="1350"></canvas>
+        <p class="hint">নিচের স্লাইডার দিয়ে ছবি ও লেখা অ্যাডজাস্ট করুন</p>
+    </div>
+
+    <div class="editor-card">
+        <h3>পোস্টার এডিটর</h3>
+
+        <div class="input-item">
+            <label>আপনার ছবি আপলোড করুন</label>
             <input type="file" id="userImgInput" accept="image/*">
             <div class="img-container" id="cropperWrapper">
                 <img id="image-to-crop">
             </div>
         </div>
 
-        <div class="control-group">
-            <label>২. নাম ও পদবী</label>
-            <input type="text" id="nameInput" placeholder="নাম লিখুন" oninput="updatePoster()">
-            <input type="text" id="titleInput" placeholder="পদবী ও এলাকা" oninput="updatePoster()">
+        <div class="input-item">
+            <label>আপনার নাম</label>
+            <input type="text" id="nameInput" placeholder="এখানে নাম লিখুন" oninput="updatePoster()">
         </div>
 
-        <div class="control-group">
-            <label>৩. ছবির পজিশন ও সাইজ</label>
-            <label>সাইজ: <input type="range" id="imgSize" min="100" max="500" value="250" oninput="updatePoster()"></label>
-            <label>ডানে-বামে: <input type="range" id="imgX" min="0" max="1080" value="195" oninput="updatePoster()"></label>
-            <label>ওপর-নিচে: <input type="range" id="imgY" min="0" max="1350" value="1085" oninput="updatePoster()"></label>
+        <div class="input-item">
+            <label>পদবী ও এলাকা</label>
+            <input type="text" id="titleInput" placeholder="পদবী ও এলাকা লিখুন" oninput="updatePoster()">
         </div>
 
-        <div class="control-group">
-            <label>৪. লেখার পজিশন ও সাইজ</label>
-            <label>ফন্ট সাইজ: <input type="range" id="fontSize" min="20" max="80" value="42" oninput="updatePoster()"></label>
-            <label>ডানে-বামে: <input type="range" id="textX" min="0" max="1080" value="420" oninput="updatePoster()"></label>
-            <label>ওপর-নিচে: <input type="range" id="textY" min="0" max="1350" value="1055" oninput="updatePoster()"></label>
+        <hr>
+
+        <div class="input-item">
+            <label>🖼️ ছবির সাইজ ও পজিশন</label>
+            <small>ছোট/বড়:</small> <input type="range" id="imgSize" min="100" max="600" value="280" oninput="updatePoster()">
+            <small>ডানে-বামে:</small> <input type="range" id="imgX" min="0" max="1080" value="200" oninput="updatePoster()">
+            <small>ওপর-নিচে:</small> <input type="range" id="imgY" min="0" max="1350" value="1080" oninput="updatePoster()">
         </div>
 
-        <button class="btn-download" onclick="downloadImage()">গ্যালারিতে সেভ করুন</button>
-    </div>
+        <div class="input-item">
+            <label>✍️ লেখার সাইজ ও পজিশন</label>
+            <small>ফন্ট সাইজ:</small> <input type="range" id="fontSize" min="20" max="100" value="45" oninput="updatePoster()">
+            <small>ডানে-বামে:</small> <input type="range" id="textX" min="0" max="1080" value="430" oninput="updatePoster()">
+            <small>ওপর-নিচে:</small> <input type="range" id="textY" min="0" max="1350" value="1050" oninput="updatePoster()">
+        </div>
 
-    <div class="preview-area">
-        <canvas id="posterCanvas" width="1080" height="1350"></canvas>
-        <p style="font-size: 12px; color: #666;">* প্রিভিউ দেখে স্লাইডার দিয়ে অ্যাডজাস্ট করুন</p>
+        <button class="btn-action btn-download" onclick="downloadImage()">ডাউনলোড করুন</button>
     </div>
 </div>
 
@@ -83,7 +111,6 @@
     bgImage.src = 'bnp-eid-bg.jpeg'; 
     bgImage.onload = () => updatePoster();
 
-    // ছবি সিলেক্ট এবং ক্রপ
     imageInput.addEventListener('change', function(e) {
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -93,21 +120,27 @@
             cropper = new Cropper(imageToCrop, {
                 aspectRatio: 1,
                 viewMode: 1,
+                ready() {
+                    // প্রথমবার ক্রপ হয়ে গেলে অটো আপডেট
+                    updateFromCropper();
+                },
                 cropend() {
-                    croppedImgData = cropper.getCroppedCanvas().toDataURL();
-                    updatePoster();
+                    updateFromCropper();
                 }
             });
         };
         reader.readAsDataURL(e.target.files[0]);
     });
 
+    function updateFromCropper() {
+        croppedImgData = cropper.getCroppedCanvas().toDataURL();
+        updatePoster();
+    }
+
     function updatePoster() {
-        // ১. ব্যাকগ্রাউন্ড ড্র করা
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
-        // ২. ইউজার ছবি ড্র করা (যদি থাকে)
         if (croppedImgData) {
             const userImg = new Image();
             userImg.onload = function() {
@@ -121,7 +154,7 @@
                 ctx.clip();
                 ctx.drawImage(userImg, x - size/2, y - size/2, size, size);
                 ctx.restore();
-                drawText(); // ছবি লোড হওয়ার পর টেক্সট ড্র হবে
+                drawText(); 
             };
             userImg.src = croppedImgData;
         } else {
@@ -139,13 +172,11 @@
         ctx.fillStyle = "white";
         ctx.textAlign = "left";
         
-        // নাম
         ctx.font = `bold ${fSize}px Arial`;
         ctx.fillText(name, tx, ty);
 
-        // পদবী (নামের নিচে কিছুটা গ্যাপ রেখে)
         ctx.font = `${fSize * 0.7}px Arial`;
-        ctx.fillText(title, tx, ty + (fSize * 1.2));
+        ctx.fillText(title, tx, ty + (fSize * 1.3));
     }
 
     function downloadImage() {
