@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNP Eid Poster Tool with Cropper</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    
+    <style>
+        :root { --primary-color: #28a745; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        h2 { color: #333; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        
+        /* Cropper Container */
+        .img-container { width: 100%; max-height: 400px; margin-bottom: 20px; display: none; overflow: hidden; }
+        #image-to-crop { max-width: 100%; }
+
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; margin-top: 10px; }
+        .btn-generate { background-color: var(--primary-color); color: white; }
+        .btn-download { background-color: #007bff; color: white; display: none; }
+        
+        canvas { width: 100%; height: auto; border-radius: 10px; margin-top: 20px; display: none; border: 2px solid #ddd; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>বিএনপি ঈদ পোস্টার মেকার</h2>
+    
+    <div class="input-group">
+        <label>আপনার ছবি নির্বাচন করুন</label>
+        <input type="file" id="userImgInput" accept="image/*">
+    </div>
+
+    <div class="img-container" id="cropperWrapper">
+        <img id="image-to-crop">
+    </div>
+
+    <div id="formFields">
+        <div class="input-group">
+            <label>আপনার নাম</label>
+            <input type="text" id="nameInput" placeholder="উদাঃ তারেক রহমান">
+        </div>
+        <div class="input-group">
+            <label>পদবী (ঐচ্ছিক)</label>
+            <input type="text" id="titleInput" placeholder="উদাঃ সাধারণ সম্পাদক">
+        </div>
+        <div class="input-group">
+            <label>এলাকা (ঐচ্ছিক)</label>
+            <input type="text" id="areaInput" placeholder="উদাঃ ঢাকা মহানগর">
+        </div>
+    </div>
+
+    <button class="btn-generate" id="generateBtn" onclick="drawPoster()">পোস্টার তৈরি করুন</button>
+    
+    <canvas id="posterCanvas" width="1080" height="1350"></canvas>
+    
+    <button id="downloadBtn" class="btn-download" onclick="downloadImage()">গ্যালারিতে সেভ করুন</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+<script>
+    const canvas = document.getElementById('posterCanvas');
+    const ctx = canvas.getContext('2d');
+    const imageInput = document.getElementById('userImgInput');
+    const imageToCrop = document.getElementById('image-to-crop');
+    const cropperWrapper = document.getElementById('cropperWrapper');
+    let cropper;
+
+    const bgImage = new Image();
+    bgImage.src = 'bnp-eid-bg.jpeg'; // আপনার GitHub এ থাকা ইমেজের নাম
+
+    // ১. ছবি সিলেক্ট করলে ক্রপার ওপেন হবে
+    imageInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                imageToCrop.src = event.target.result;
+                cropperWrapper.style.display = 'block';
+                
+                if (cropper) {
+                    cropper.destroy();
+                }
+                
+                cropper = new Cropper(imageToCrop, {
+                    aspectRatio: 1, // গোল ছবির জন্য স্কয়ার ক্রপ
+                    viewMode: 1,
+                    autoCropArea: 1,
+                });
+            };
+            reader.readAsDataURL(files[0]);
+        }
+    });
+
+    function drawPoster() {
+        const name = document.getElementById('nameInput').value;
+        const title = document.getElementById('titleInput').value || "";
+        const area = document.getElementById('areaInput').value || "";
+
+        if (!cropper || !name) {
+            alert("দয়া করে ছবি সিলেক্ট করুন এবং নাম লিখুন!");
+            return;
+        }
+
+        // ২. ক্রপ করা ছবি নেওয়া
+        const croppedCanvas = cropper.getCroppedCanvas({
+            width: 400,
+            height: 400
+        });
+
+        const croppedImage = new Image();
+        croppedImage.onload = function() {
+            // ৩. মেইন পোস্টার ব্যাকগ্রাউন্ড ড্র করা
+            ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+
+            // ৪. ক্রপ করা ছবি গোল করে বসানো
+            const imgSize = 250; 
+            const posX = 195; // বামের বৃত্তের পজিশন
+            const posY = 1085;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(posX, posY, imgSize / 2, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.clip();
+            ctx.drawImage(croppedImage, posX - imgSize/2, posY - imgSize/2, imgSize, imgSize);
+            ctx.restore();
+
+            // ৫. টেক্সট অ্যাড করা (নীল বক্সে)
+            ctx.fillStyle = "white";
+            ctx.textAlign = "left";
+
+            ctx.font = "bold 42px Arial"; // নাম
+            ctx.fillText(name, 420, 1055);
+
+            ctx.font = "32px Arial"; // পদবী
+            ctx.fillText(title, 420, 1105);
+
+            ctx.font = "28px Arial"; // এলাকা
+            ctx.fillText(area, 420, 1150);
+
+            // আউটপুট দেখানো
+            canvas.style.display = "block";
+            document.getElementById('downloadBtn').style.display = "block";
+            cropperWrapper.style.display = 'none'; // কাজ শেষ হলে ক্রপার হাইড করা
+        };
+        croppedImage.src = croppedCanvas.toDataURL();
+    }
+
+    function downloadImage() {
+        const link = document.createElement('a');
+        link.download = 'BNP-Eid-Poster.png';
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+    }
+</script>
+
+</body>
+</html>
