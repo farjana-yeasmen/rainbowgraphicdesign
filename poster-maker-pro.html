@@ -3,222 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Poster Maker Pro - Rainbow Graphic Design</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<title>Interactive Stylish Poster Maker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:#f1f3f7;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Poppins',sans-serif;background:#f7f9fc;color:#111;display:flex;flex-direction:column;align-items:center;padding:20px;}
+h1{font-size:28px;text-align:center;margin-bottom:10px;}
+p{font-size:16px;color:#555;text-align:center;margin-bottom:20px;}
+button{padding:10px 24px;border:none;border-radius:8px;background:#667eea;color:white;font-weight:600;cursor:pointer;transition:.3s;margin-top:10px;}
+button:hover{background:#5a67d8;}
 
-.container{
-  display:flex;
-  height:100vh;
-}
-
-.controls{
-  width:30%;
-  background:#fff;
-  padding:20px;
-  overflow-y:auto;
-  box-shadow:0 0 15px rgba(0,0,0,0.05);
-}
-
-.controls h2{
-  margin-top:0;
-}
-
-.controls button, .controls input, .controls select{
-  width:100%;
-  margin-top:10px;
-  padding:8px;
-  border-radius:8px;
-  border:1px solid #ddd;
-}
-
-.controls button{
-  background:#667eea;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  border:none;
-}
-
-.preview-wrapper{
-  width:70%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.poster{
-  width:600px;
-  height:600px;
-  background:linear-gradient(135deg,#667eea,#764ba2);
+/* Poster Wrapper */
+.poster-wrapper{
   position:relative;
-  border-radius:12px;
+  display:flex;
+  flex-direction:row;
+  width:800px;
+  max-width:95%;
+  border-radius:20px;
   overflow:hidden;
+  margin-bottom:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.3);
+  min-height:400px;
 }
 
-.draggable{
+/* Background layer */
+.poster-bg{
   position:absolute;
-  cursor:move;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;
+  background:linear-gradient(135deg,#0d1b2a,#1b2a4d);
+  background-size:cover;
+  background-position:center;
 }
 
-.shape{
-  width:100px;
-  height:100px;
-  background:white;
-}
-
-.overlay{
+/* Overlay under human image */
+.poster-overlay{
   position:absolute;
+  bottom:0;
   width:100%;
-  height:100%;
-  top:0;
+  height:50%;
   left:0;
-  pointer-events:none;
+  background:linear-gradient(to top, rgba(13,27,42,1), rgba(13,27,42,0));
+  z-index:1;
 }
 
+/* Content & image above overlay */
+.text-area, .model-area{position:relative;z-index:2;padding:40px;flex:1;}
+.text-area h2{font-size:36px;margin-bottom:15px;}
+.text-area h2 .highlight{color:#42A5F5;}
+.text-area p{color:#cfd8dc;margin-bottom:15px;}
+.text-area .quote{font-style:italic;color:#90caf9;}
+.model-area img{max-width:100%;border-radius:12px;}
+
+/* Footer */
+.footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 40px;
+  background:rgba(0,0,0,0.2);
+  font-size:14px;
+}
+.cta-button{padding:10px 25px;background:#42A5F5;border-radius:8px;font-weight:600;}
+.contact-info{text-align:right;}
+.contact-info .label{font-size:12px;color:#a0c4ff;}
+.contact-info .phone{font-weight:700;}
+.contact-info .website{font-size:12px;color:#cfd8dc;}
+
+/* Controls */
+.controls{max-width:800px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
+.controls input[type="text"], .controls input[type="file"], .controls select{padding:8px;border-radius:6px;border:1px solid #ddd;width:180px;}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<h1>Interactive Facebook-Style Poster Maker</h1>
+<p>Edit text, image, layout, background & download</p>
 
 <div class="controls">
-<h2>Poster Maker Pro</h2>
-
-<button onclick="addText()">Add Text</button>
-<button onclick="addShape()">Add Shape</button>
-<button onclick="addSticker()">Add Sticker</button>
-
-<input type="file" id="imageUpload">
-
-<select onchange="changeGradient(this.value)">
-<option value="linear-gradient(135deg,#667eea,#764ba2)">Purple Blue</option>
-<option value="linear-gradient(135deg,#ff9966,#ff5e62)">Orange Pink</option>
-<option value="linear-gradient(135deg,#0f2027,#2c5364)">Dark Cyan</option>
-<option value="linear-gradient(135deg,#000000,#b8860b)">Black Gold</option>
+<input type="file" id="imageUpload" accept="image/*">
+<input type="text" id="headlineInput" placeholder="Headline">
+<input type="text" id="descriptionInput" placeholder="Description">
+<input type="text" id="quoteInput" placeholder="Quote">
+<select id="bgSelect">
+<option value="linear-gradient(135deg,#0d1b2a,#1b2a4d)">Dark Blue Gradient</option>
+<option value="linear-gradient(135deg,#1b2735,#090a0f)">Navy Black Gradient</option>
+<option value="url('bg1.jpg')">City Overlay 1</option>
+<option value="url('bg2.jpg')">City Overlay 2</option>
 </select>
-
-<input type="color" onchange="setOverlay(this.value)">
-<button onclick="removeOverlay()">Remove Overlay</button>
-
-<button onclick="downloadPoster()">Download PNG</button>
-<button onclick="resetPoster()">Reset</button>
-
+<button onclick="switchLayout()">Switch Layout</button>
+<button onclick="downloadPoster('png')">Download PNG</button>
+<button onclick="downloadPoster('jpg')">Download JPG</button>
 </div>
 
-<div class="preview-wrapper">
-<div class="poster" id="poster">
-<div class="overlay" id="overlay"></div>
+<div class="poster-wrapper" id="poster">
+  <div class="poster-bg" id="posterBg"></div>
+  <div class="poster-overlay"></div>
+
+  <div class="text-area" id="textArea">
+    <h2 id="headline"><span class="highlight">Digital</span> Marketing Agency</h2>
+    <p id="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <div class="quote" id="quote">"Find new opportunity with us"</div>
+  </div>
+
+  <div class="model-area" id="modelArea">
+    <img id="modelImage" src="model.png" alt="Professional Model">
+  </div>
+</div>
+
+<div class="footer">
+<div class="cta-button">LEARN MORE</div>
+<div class="contact-info">
+<div class="label">More information call us</div>
+<div class="phone">📞 +880123456789</div>
+<div class="website">www.yourcompany.com</div>
 </div>
 </div>
 
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const poster = document.getElementById("poster");
-const overlay = document.getElementById("overlay");
+const textArea = document.getElementById("textArea");
+const modelArea = document.getElementById("modelArea");
+const headline = document.getElementById("headline");
+const description = document.getElementById("description");
+const quote = document.getElementById("quote");
+const modelImage = document.getElementById("modelImage");
+const posterBg = document.getElementById("posterBg");
 
-function makeDraggable(el){
-  let offsetX=0, offsetY=0, isDown=false;
+// Update text dynamically
+document.getElementById("headlineInput").addEventListener("input", e=>headline.innerText=e.target.value);
+document.getElementById("descriptionInput").addEventListener("input", e=>description.innerText=e.target.value);
+document.getElementById("quoteInput").addEventListener("input", e=>quote.innerText=e.target.value);
 
-  el.addEventListener("mousedown", function(e){
-    isDown=true;
-    offsetX=e.offsetX;
-    offsetY=e.offsetY;
-  });
-
-  document.addEventListener("mousemove", function(e){
-    if(!isDown) return;
-    const rect = poster.getBoundingClientRect();
-    el.style.left = (e.clientX - rect.left - offsetX) + "px";
-    el.style.top = (e.clientY - rect.top - offsetY) + "px";
-  });
-
-  document.addEventListener("mouseup", function(){
-    isDown=false;
-  });
-}
-
-function addText(){
-  const text = document.createElement("div");
-  text.className="draggable";
-  text.contentEditable=true;
-  text.innerText="Edit Text";
-  text.style.color="white";
-  text.style.fontSize="24px";
-  text.style.top="50px";
-  text.style.left="50px";
-  poster.appendChild(text);
-  makeDraggable(text);
-}
-
-function addShape(){
-  const shape = document.createElement("div");
-  shape.className="draggable shape";
-  shape.style.top="100px";
-  shape.style.left="100px";
-  poster.appendChild(shape);
-  makeDraggable(shape);
-}
-
-function addSticker(){
-  const sticker = document.createElement("div");
-  sticker.className="draggable";
-  sticker.innerText="🔥";
-  sticker.style.fontSize="60px";
-  sticker.style.top="150px";
-  sticker.style.left="150px";
-  poster.appendChild(sticker);
-  makeDraggable(sticker);
-}
-
+// Update image
 document.getElementById("imageUpload").addEventListener("change", function(){
   const reader = new FileReader();
-  reader.onload=function(e){
-    const img = document.createElement("img");
-    img.src=e.target.result;
-    img.className="draggable";
-    img.style.width="200px";
-    img.style.top="200px";
-    img.style.left="200px";
-    poster.appendChild(img);
-    makeDraggable(img);
-  }
+  reader.onload=function(e){ modelImage.src=e.target.result; }
   reader.readAsDataURL(this.files[0]);
 });
 
-function changeGradient(value){
-  poster.style.background=value;
+// Switch Layout
+let isTextLeft = true;
+function switchLayout(){
+  if(isTextLeft){
+    poster.insertBefore(modelArea, textArea);
+  } else {
+    poster.insertBefore(textArea, modelArea);
+  }
+  isTextLeft = !isTextLeft;
 }
 
-function setOverlay(color){
-  overlay.style.background=color;
-  overlay.style.opacity="0.3";
-}
+// Change background
+document.getElementById("bgSelect").addEventListener("change", e=>{
+  posterBg.style.background=e.target.value;
+  if(e.target.value.startsWith('url')){
+    posterBg.style.backgroundSize='cover';
+    posterBg.style.backgroundPosition='center';
+  } else {
+    posterBg.style.backgroundSize='auto';
+  }
+});
 
-function removeOverlay(){
-  overlay.style.background="transparent";
-}
-
-function downloadPoster(){
+// Download
+function downloadPoster(type){
   html2canvas(poster).then(canvas=>{
     const link=document.createElement("a");
-    link.download="poster-pro.png";
-    link.href=canvas.toDataURL();
+    link.download="poster."+type;
+    if(type==='jpg'){
+      link.href=canvas.toDataURL("image/jpeg",0.95);
+    } else {
+      link.href=canvas.toDataURL();
+    }
     link.click();
   });
-}
-
-function resetPoster(){
-  poster.innerHTML='<div class="overlay" id="overlay"></div>';
 }
 </script>
 
