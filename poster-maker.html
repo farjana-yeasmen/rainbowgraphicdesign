@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poster Maker - Rainbow Graphic Design</title>
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  background:#f4f6f9;
+}
+
+.container{
+  display:flex;
+  height:100vh;
+}
+
+/* LEFT PANEL */
+.controls{
+  width:35%;
+  background:#ffffff;
+  padding:20px;
+  overflow-y:auto;
+  box-shadow:0 0 15px rgba(0,0,0,0.05);
+}
+
+.controls h2{
+  margin-top:0;
+}
+
+.controls label{
+  font-size:14px;
+  font-weight:600;
+  display:block;
+  margin-top:15px;
+}
+
+.controls input,
+.controls select{
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+.controls button{
+  margin-top:15px;
+  padding:10px;
+  width:100%;
+  border:none;
+  border-radius:8px;
+  background:#667eea;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.controls button:hover{
+  background:#5a67d8;
+}
+
+.gradient-options{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:10px;
+}
+
+.gradient-box{
+  height:50px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* RIGHT PREVIEW */
+.preview-wrapper{
+  width:65%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.poster{
+  width:500px;
+  height:500px;
+  border-radius:12px;
+  padding:20px;
+  box-sizing:border-box;
+  color:#fff;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  transition:0.3s ease;
+}
+
+.top-text{
+  font-size:14px;
+  opacity:0.9;
+}
+
+.main-image{
+  width:100%;
+  height:250px;
+  object-fit:cover;
+  border-radius:12px;
+  border:8px solid #fff;
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.title{
+  font-size:28px;
+  font-weight:bold;
+}
+
+.bottom-text{
+  font-size:16px;
+  opacity:0.9;
+}
+
+.watermark{
+  position:absolute;
+  bottom:5px;
+  right:10px;
+  font-size:10px;
+  opacity:0.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- LEFT CONTROL PANEL -->
+<div class="controls">
+<h2>Poster Maker</h2>
+
+<label>Upload Image</label>
+<input type="file" id="imageUpload">
+
+<label>Top Headline</label>
+<input type="text" id="topText" placeholder="Enter headline">
+
+<label>Main Title</label>
+<input type="text" id="mainTitle" placeholder="Enter main title">
+
+<label>Bottom Name</label>
+<input type="text" id="bottomText" placeholder="Enter name or page">
+
+<label>Style Mode</label>
+<select id="styleMode">
+  <option value="minimal">Minimal</option>
+  <option value="bold">Bold</option>
+  <option value="elegant">Elegant</option>
+</select>
+
+<label>Gradient Background</label>
+<div class="gradient-options">
+  <div class="gradient-box" style="background:linear-gradient(135deg,#667eea,#764ba2)" onclick="setGradient('linear-gradient(135deg,#667eea,#764ba2)')"></div>
+  <div class="gradient-box" style="background:linear-gradient(135deg,#ff9966,#ff5e62)" onclick="setGradient('linear-gradient(135deg,#ff9966,#ff5e62)')"></div>
+  <div class="gradient-box" style="background:linear-gradient(135deg,#0f2027,#2c5364)" onclick="setGradient('linear-gradient(135deg,#0f2027,#2c5364)')"></div>
+  <div class="gradient-box" style="background:linear-gradient(135deg,#000000,#b8860b)" onclick="setGradient('linear-gradient(135deg,#000000,#b8860b)')"></div>
+</div>
+
+<label>Border Radius</label>
+<input type="range" min="0" max="30" value="12" id="radiusSlider">
+
+<button onclick="resetDesign()">Reset Design</button>
+<button onclick="downloadPoster()">Download PNG</button>
+
+</div>
+
+<!-- RIGHT PREVIEW -->
+<div class="preview-wrapper">
+<div class="poster" id="poster" style="background:linear-gradient(135deg,#667eea,#764ba2)">
+  <div class="top-text" id="previewTop">Top Headline</div>
+  <img src="" class="main-image" id="previewImage">
+  <div class="title" id="previewTitle">Main Title</div>
+  <div class="bottom-text" id="previewBottom">Page Name</div>
+  <div class="watermark">Made with Rainbow Graphic Design</div>
+</div>
+</div>
+
+</div>
+
+<script>
+const imageUpload = document.getElementById("imageUpload");
+const previewImage = document.getElementById("previewImage");
+const topText = document.getElementById("topText");
+const mainTitle = document.getElementById("mainTitle");
+const bottomText = document.getElementById("bottomText");
+const previewTop = document.getElementById("previewTop");
+const previewTitle = document.getElementById("previewTitle");
+const previewBottom = document.getElementById("previewBottom");
+const poster = document.getElementById("poster");
+const radiusSlider = document.getElementById("radiusSlider");
+const styleMode = document.getElementById("styleMode");
+
+imageUpload.addEventListener("change", function(){
+  const reader = new FileReader();
+  reader.onload = function(e){
+    previewImage.src = e.target.result;
+  }
+  reader.readAsDataURL(this.files[0]);
+});
+
+topText.addEventListener("input", () => previewTop.innerText = topText.value);
+mainTitle.addEventListener("input", () => previewTitle.innerText = mainTitle.value);
+bottomText.addEventListener("input", () => previewBottom.innerText = bottomText.value);
+
+radiusSlider.addEventListener("input", () => {
+  previewImage.style.borderRadius = radiusSlider.value + "px";
+});
+
+styleMode.addEventListener("change", () => {
+  if(styleMode.value === "minimal"){
+    previewTitle.style.fontSize = "24px";
+    previewTitle.style.fontWeight = "500";
+  }
+  if(styleMode.value === "bold"){
+    previewTitle.style.fontSize = "32px";
+    previewTitle.style.fontWeight = "900";
+  }
+  if(styleMode.value === "elegant"){
+    previewTitle.style.fontSize = "26px";
+    previewTitle.style.fontWeight = "600";
+  }
+});
+
+function setGradient(value){
+  poster.style.background = value;
+}
+
+function resetDesign(){
+  topText.value = "";
+  mainTitle.value = "";
+  bottomText.value = "";
+  previewTop.innerText = "Top Headline";
+  previewTitle.innerText = "Main Title";
+  previewBottom.innerText = "Page Name";
+  previewImage.src = "";
+}
+
+function downloadPoster(){
+  html2canvas(poster).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "poster.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</body>
+</html>
