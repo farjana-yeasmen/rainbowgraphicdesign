@@ -3,182 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Poster Maker Pro</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Pro Poster Maker</title>
 
 <style>
 
 body{
-font-family:Poppins;
-background:#f1f5f9;
-padding:20px;
+font-family:sans-serif;
+background:#111;
+color:white;
 text-align:center;
-}
-
-h1{
-margin-bottom:20px;
+padding:20px;
 }
 
 .controls{
-max-width:900px;
-margin:auto;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-margin-bottom:25px;
+margin-bottom:20px;
 }
 
-.controls label{
-font-size:14px;
-text-align:left;
-}
-
-.controls input,
-.controls select{
-width:100%;
+input,select,button{
 padding:8px;
+margin:5px;
 border-radius:6px;
-border:1px solid #ccc;
+border:none;
 }
 
 button{
-padding:10px 18px;
-border:none;
-background:#2563eb;
+background:#ff4d4d;
 color:white;
-border-radius:8px;
 cursor:pointer;
 }
 
-.poster{
+#poster{
 width:1080px;
 height:1080px;
-max-width:100%;
 margin:auto;
-border-radius:14px;
-overflow:hidden;
 position:relative;
-background:linear-gradient(135deg,#0f172a,#1e3a8a);
-color:white;
+background:#222;
+overflow:hidden;
 }
 
-/* city blur overlay */
-
-.city{
+#posterText{
 position:absolute;
-width:100%;
-height:100%;
-background:url("https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=1200") center/cover;
-opacity:.15;
-}
-
-/* geometric pattern */
-
-.pattern{
-position:absolute;
-width:100%;
-height:100%;
-background-image:radial-gradient(circle,#ffffff22 1px,transparent 1px);
-background-size:30px 30px;
-}
-
-/* big circle */
-
-.circle{
-position:absolute;
-width:700px;
-height:700px;
-background:radial-gradient(circle,#00000070,transparent);
-border-radius:50%;
-left:-250px;
-top:-150px;
-}
-
-/* logo */
-
-.logo{
-position:absolute;
-top:30px;
-left:40px;
-}
-
-.logo img{
-height:60px;
-}
-
-/* text */
-
-.text{
-position:absolute;
-left:80px;
-top:300px;
-width:420px;
-cursor:move;
-}
-
-.headline{
+top:200px;
+left:200px;
 font-size:60px;
-font-weight:700;
-line-height:1.1;
-}
-
-.desc{
-margin-top:14px;
-opacity:.9;
-}
-
-.quote{
-margin-top:10px;
-color:#93c5fd;
-font-style:italic;
-}
-
-/* model image */
-
-.model{
-position:absolute;
-right:40px;
-bottom:0;
+font-weight:bold;
 cursor:move;
 }
 
-.model img{
-height:720px;
-filter:drop-shadow(0 10px 20px rgba(0,0,0,.5));
-}
-
-/* bottom gradient */
-
-.overlay{
+#person{
 position:absolute;
 bottom:0;
-width:100%;
-height:40%;
-background:linear-gradient(to top,#0f172a,transparent);
-}
-
-/* footer */
-
-.footer{
-position:absolute;
-bottom:40px;
-left:80px;
-}
-
-.cta{
-background:linear-gradient(90deg,#3b82f6,#60a5fa);
-padding:14px 30px;
-border-radius:30px;
-font-weight:600;
-}
-
-.contact{
-position:absolute;
-bottom:40px;
-right:60px;
-text-align:right;
+left:100px;
+height:500px;
+cursor:move;
 }
 
 </style>
@@ -186,163 +63,170 @@ text-align:right;
 
 <body>
 
-<h1>Poster Maker Pro</h1>
+<h2>Pro Poster Generator</h2>
 
 <div class="controls">
 
-<label>Upload Logo
-<input type="file" id="logoUpload">
-</label>
+<input type="text" id="textInput" placeholder="Enter Headline">
 
-<label>Upload Human Image
-<input type="file" id="modelUpload">
-</label>
+<br>
 
-<label>Headline
-<input type="text" id="headlineInput">
-</label>
+<label>Background Preset</label>
 
-<label>Description
-<input type="text" id="descInput">
-</label>
+<select onchange="setPreset(this.value)">
 
-<label>Quote
-<input type="text" id="quoteInput">
-</label>
+<option value="">Select</option>
 
-<label>Phone Number
-<input type="text" id="phoneInput">
-</label>
+<option value="#000000">Black</option>
+<option value="#1e3c72">Blue</option>
+<option value="#8e44ad">Purple</option>
+<option value="#e74c3c">Red</option>
+<option value="#16a085">Green</option>
+<option value="#f39c12">Orange</option>
+<option value="#2c3e50">Dark</option>
+<option value="#34495e">Steel</option>
+<option value="#7f8c8d">Grey</option>
+<option value="#ffffff">White</option>
 
-<label>Website
-<input type="text" id="websiteInput">
-</label>
-
-<label>Headline Color
-<input type="color" id="colorPicker">
-</label>
-
-<label>Font Style
-<select id="fontSelect">
-<option>Poppins</option>
-<option>Arial</option>
-<option>Montserrat</option>
 </select>
-</label>
 
-</div>
+<button onclick="randomGradient()">Auto Gradient</button>
+
+<br>
+
+<label>Text Effect</label>
+
+<select onchange="setTextEffect(this.value)">
+
+<option value="none">None</option>
+<option value="shadow">Shadow</option>
+<option value="glow">Glow</option>
+
+</select>
+
+<br>
+
+<input type="file" id="imgUpload">
 
 <button onclick="downloadPoster()">Download Poster</button>
 
-<br><br>
-
-<div class="poster" id="poster">
-
-<div class="city"></div>
-<div class="pattern"></div>
-<div class="circle"></div>
-
-<div class="logo">
-<img id="logoImg">
 </div>
 
-<div class="text" id="textBox">
+<div id="poster">
 
-<div class="headline" id="headline">
-Digital Marketing Agency
-</div>
+<div id="posterText">Headline</div>
 
-<div class="desc" id="desc">
-Lorem ipsum dolor sit amet consectetur adipiscing elit
-</div>
-
-<div class="quote" id="quote">
-"Find new opportunity with us"
-</div>
+<img id="person"/>
 
 </div>
-
-<div class="model" id="modelBox">
-<img id="modelImg">
-</div>
-
-<div class="overlay"></div>
-
-<div class="footer">
-<div class="cta">LEARN MORE</div>
-</div>
-
-<div class="contact">
-<div>More information call us</div>
-<div id="phone">000 123 456 789</div>
-<div id="website">www.website.com</div>
-</div>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
 
-headlineInput.oninput=e=>headline.innerText=e.target.value
-descInput.oninput=e=>desc.innerText=e.target.value
-quoteInput.oninput=e=>quote.innerText=e.target.value
-phoneInput.oninput=e=>phone.innerText=e.target.value
-websiteInput.oninput=e=>website.innerText=e.target.value
+const posterText = document.getElementById("posterText")
+const poster = document.getElementById("poster")
+const person = document.getElementById("person")
 
-colorPicker.oninput=e=>headline.style.color=e.target.value
-fontSelect.onchange=e=>poster.style.fontFamily=e.target.value
-
-logoUpload.onchange=e=>{
-let r=new FileReader()
-r.onload=x=>logoImg.src=x.target.result
-r.readAsDataURL(e.target.files[0])
+document.getElementById("textInput").oninput = e=>{
+posterText.innerText = e.target.value
 }
 
-modelUpload.onchange=e=>{
-let r=new FileReader()
-r.onload=x=>modelImg.src=x.target.result
-r.readAsDataURL(e.target.files[0])
+document.getElementById("imgUpload").onchange = e=>{
+person.src = URL.createObjectURL(e.target.files[0])
 }
+
+function setPreset(color){
+poster.style.background = color
+}
+
+function randomGradient(){
+
+let colors = [
+"#ff416c","#ff4b2b",
+"#00c6ff","#0072ff",
+"#f7971e","#ffd200",
+"#7F00FF","#E100FF",
+"#00F260","#0575E6"
+]
+
+let c1 = colors[Math.floor(Math.random()*colors.length)]
+let c2 = colors[Math.floor(Math.random()*colors.length)]
+
+poster.style.background =
+`linear-gradient(135deg,${c1},${c2})`
+}
+
+function setTextEffect(type){
+
+if(type=="shadow"){
+posterText.style.textShadow="4px 4px 10px black"
+}
+
+else if(type=="glow"){
+posterText.style.textShadow="0 0 20px #fff"
+}
+
+else{
+posterText.style.textShadow="none"
+}
+
+}
+
+function dragElement(el){
+
+let pos1=0,pos2=0,pos3=0,pos4=0
+
+el.onmousedown = dragMouseDown
+
+function dragMouseDown(e){
+
+e.preventDefault()
+
+pos3 = e.clientX
+pos4 = e.clientY
+
+document.onmouseup = closeDrag
+document.onmousemove = elementDrag
+}
+
+function elementDrag(e){
+
+e.preventDefault()
+
+pos1 = pos3 - e.clientX
+pos2 = pos4 - e.clientY
+pos3 = e.clientX
+pos4 = e.clientY
+
+el.style.top = (el.offsetTop - pos2) + "px"
+el.style.left = (el.offsetLeft - pos1) + "px"
+}
+
+function closeDrag(){
+
+document.onmouseup=null
+document.onmousemove=null
+
+}
+
+}
+
+dragElement(posterText)
+dragElement(person)
 
 function downloadPoster(){
+
 html2canvas(poster).then(canvas=>{
 let link=document.createElement("a")
 link.download="poster.png"
 link.href=canvas.toDataURL()
 link.click()
 })
-}
 
-function dragElement(el){
-let pos1=0,pos2=0,pos3=0,pos4=0
-el.onmousedown=dragMouseDown
-function dragMouseDown(e){
-e.preventDefault()
-pos3=e.clientX
-pos4=e.clientY
-document.onmouseup=closeDrag
-document.onmousemove=elementDrag
 }
-function elementDrag(e){
-e.preventDefault()
-pos1=pos3-e.clientX
-pos2=pos4-e.clientY
-pos3=e.clientX
-pos4=e.clientY
-el.style.top=(el.offsetTop-pos2)+"px"
-el.style.left=(el.offsetLeft-pos1)+"px"
-}
-function closeDrag(){
-document.onmouseup=null
-document.onmousemove=null
-}
-}
-
-dragElement(document.getElementById("textBox"))
-dragElement(document.getElementById("modelBox"))
 
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 </body>
 </html>
