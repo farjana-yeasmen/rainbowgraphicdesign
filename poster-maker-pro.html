@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pro Poster Maker</title>
+
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
 <style>
 
 body{
-font-family:sans-serif;
+font-family:Arial;
 background:#111;
 color:white;
-text-align:center;
 padding:20px;
 }
 
@@ -22,40 +22,72 @@ margin-bottom:20px;
 input,select,button{
 padding:8px;
 margin:5px;
-border-radius:6px;
-border:none;
-}
-
-button{
-background:#ff4d4d;
-color:white;
-cursor:pointer;
 }
 
 #poster{
+
 width:1080px;
 height:1080px;
-margin:auto;
 position:relative;
-background:#222;
+
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+
 overflow:hidden;
 }
 
-#posterText{
+.bgOverlay{
 position:absolute;
-top:200px;
-left:200px;
-font-size:60px;
-font-weight:bold;
-cursor:move;
+width:100%;
+height:100%;
+background-size:cover;
+opacity:.25;
 }
 
-#person{
+.gradientFade{
+
 position:absolute;
 bottom:0;
+width:100%;
+height:50%;
+background:linear-gradient(to top,#000000cc,transparent);
+
+}
+
+.logo{
+
+position:absolute;
+top:40px;
+left:40px;
+max-width:150px;
+
+}
+
+.headline{
+
+position:absolute;
+top:300px;
 left:100px;
-height:500px;
+
+font-size:80px;
+font-weight:bold;
+
+background:#00000088;
+padding:20px 30px;
+border-radius:8px;
+
 cursor:move;
+
+}
+
+.human{
+
+position:absolute;
+bottom:0;
+right:80px;
+max-height:900px;
+
+cursor:move;
+
 }
 
 </style>
@@ -67,166 +99,98 @@ cursor:move;
 
 <div class="controls">
 
-<input type="text" id="textInput" placeholder="Enter Headline">
+Logo
+<input type="file" id="logoUpload">
 
-<br>
+Human Image
+<input type="file" id="humanUpload">
 
-<label>Background Preset</label>
+Headline
+<input type="text" id="headlineInput" value="Digital Marketing">
 
-<select onchange="setPreset(this.value)">
-
-<option value="">Select</option>
-
-<option value="#000000">Black</option>
-<option value="#1e3c72">Blue</option>
-<option value="#8e44ad">Purple</option>
-<option value="#e74c3c">Red</option>
-<option value="#16a085">Green</option>
-<option value="#f39c12">Orange</option>
-<option value="#2c3e50">Dark</option>
-<option value="#34495e">Steel</option>
-<option value="#7f8c8d">Grey</option>
-<option value="#ffffff">White</option>
-
-</select>
-
-<button onclick="randomGradient()">Auto Gradient</button>
-
-<br>
-
-<label>Text Effect</label>
-
-<select onchange="setTextEffect(this.value)">
-
+Background
+<select id="bgSelect">
 <option value="none">None</option>
-<option value="shadow">Shadow</option>
-<option value="glow">Glow</option>
-
+<option value="https://images.unsplash.com/photo-1492724441997-5dc865305da7">City</option>
+<option value="https://images.unsplash.com/photo-1492724724894-7464c27d0ceb">Office</option>
+<option value="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d">Work</option>
+<option value="https://images.unsplash.com/photo-1460925895917-afdab827c52f">Tech</option>
+<option value="https://images.unsplash.com/photo-1504384308090-c894fdcc538d">Business</option>
 </select>
 
-<br>
-
-<input type="file" id="imgUpload">
-
-<button onclick="downloadPoster()">Download Poster</button>
+<button onclick="download()">Download PNG</button>
 
 </div>
 
 <div id="poster">
 
-<div id="posterText">Headline</div>
+<div class="bgOverlay" id="bg"></div>
 
-<img id="person"/>
+<img id="logo" class="logo">
+
+<div id="headline" class="headline">Digital Marketing</div>
+
+<img id="human" class="human">
+
+<div class="gradientFade"></div>
 
 </div>
 
+
 <script>
 
-const posterText = document.getElementById("posterText")
-const poster = document.getElementById("poster")
-const person = document.getElementById("person")
-
-document.getElementById("textInput").oninput = e=>{
-posterText.innerText = e.target.value
+headlineInput.oninput=()=>{
+headline.innerText=headlineInput.value
 }
 
-document.getElementById("imgUpload").onchange = e=>{
-person.src = URL.createObjectURL(e.target.files[0])
+logoUpload.onchange=e=>{
+logo.src=URL.createObjectURL(e.target.files[0])
 }
 
-function setPreset(color){
-poster.style.background = color
+humanUpload.onchange=e=>{
+human.src=URL.createObjectURL(e.target.files[0])
 }
 
-function randomGradient(){
-
-let colors = [
-"#ff416c","#ff4b2b",
-"#00c6ff","#0072ff",
-"#f7971e","#ffd200",
-"#7F00FF","#E100FF",
-"#00F260","#0575E6"
-]
-
-let c1 = colors[Math.floor(Math.random()*colors.length)]
-let c2 = colors[Math.floor(Math.random()*colors.length)]
-
-poster.style.background =
-`linear-gradient(135deg,${c1},${c2})`
+bgSelect.onchange=()=>{
+bg.style.backgroundImage=`url(${bgSelect.value})`
 }
 
-function setTextEffect(type){
+interact('.headline,.human').draggable({
 
-if(type=="shadow"){
-posterText.style.textShadow="4px 4px 10px black"
-}
+listeners:{
+move(event){
 
-else if(type=="glow"){
-posterText.style.textShadow="0 0 20px #fff"
-}
+let target=event.target
 
-else{
-posterText.style.textShadow="none"
-}
+let x=(parseFloat(target.getAttribute('data-x'))||0)+event.dx
+let y=(parseFloat(target.getAttribute('data-y'))||0)+event.dy
 
-}
+target.style.transform=`translate(${x}px,${y}px)`
 
-function dragElement(el){
-
-let pos1=0,pos2=0,pos3=0,pos4=0
-
-el.onmousedown = dragMouseDown
-
-function dragMouseDown(e){
-
-e.preventDefault()
-
-pos3 = e.clientX
-pos4 = e.clientY
-
-document.onmouseup = closeDrag
-document.onmousemove = elementDrag
-}
-
-function elementDrag(e){
-
-e.preventDefault()
-
-pos1 = pos3 - e.clientX
-pos2 = pos4 - e.clientY
-pos3 = e.clientX
-pos4 = e.clientY
-
-el.style.top = (el.offsetTop - pos2) + "px"
-el.style.left = (el.offsetLeft - pos1) + "px"
-}
-
-function closeDrag(){
-
-document.onmouseup=null
-document.onmousemove=null
+target.setAttribute('data-x',x)
+target.setAttribute('data-y',y)
 
 }
-
 }
 
-dragElement(posterText)
-dragElement(person)
+})
 
-function downloadPoster(){
+function download(){
 
-html2canvas(poster).then(canvas=>{
+html2canvas(document.querySelector("#poster")).then(canvas=>{
+
 let link=document.createElement("a")
 link.download="poster.png"
 link.href=canvas.toDataURL()
 link.click()
+
 })
 
 }
 
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 </body>
 </html>
