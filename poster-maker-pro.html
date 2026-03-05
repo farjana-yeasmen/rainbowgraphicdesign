@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mobile-Friendly Pro Poster Maker</title>
-
+<title>Poster Maker Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
 <style>
 body{
   font-family:sans-serif;
@@ -14,29 +12,30 @@ body{
   color:white;
   padding:10px;
   text-align:center;
+  margin:0;
 }
-
-h2{margin-bottom:15px;}
-
+header{
+  padding:10px;
+  text-align:center;
+}
+header img{
+  max-height:50px;
+}
 .controls{
-  margin-bottom:20px;
+  margin:15px 0;
 }
-
 .controls input, .controls select, .controls button{
   padding:6px;
-  margin:5px;
+  margin:4px;
   border-radius:5px;
   border:none;
 }
-
 .controls label{margin-right:10px;}
-
 #poster-container{
   width:100%;
-  max-width:400px; /* mobile-friendly preview */
+  max-width:400px;
   margin:auto;
 }
-
 #poster{
   width:100%;
   aspect-ratio:1/1;
@@ -45,7 +44,6 @@ h2{margin-bottom:15px;}
   overflow:hidden;
   border-radius:10px;
 }
-
 .bgOverlay{
   position:absolute;
   width:100%;
@@ -53,7 +51,6 @@ h2{margin-bottom:15px;}
   background-size:cover;
   opacity:.25;
 }
-
 .gradientFade{
   position:absolute;
   bottom:0;
@@ -61,14 +58,16 @@ h2{margin-bottom:15px;}
   height:50%;
   background:linear-gradient(to top,#000000cc,transparent);
 }
-
-.logo{
+.logo-main{
+  display:none;
+}
+.logo-watermark{
   position:absolute;
   top:10px;
-  left:10px;
-  max-width:80px;
+  right:10px;
+  max-width:50px;
+  opacity:0.6;
 }
-
 .headline{
   position:absolute;
   top:30%;
@@ -81,7 +80,6 @@ h2{margin-bottom:15px;}
   width:80%;
   text-align:center;
 }
-
 .bodytext{
   position:absolute;
   top:50%;
@@ -93,14 +91,12 @@ h2{margin-bottom:15px;}
   width:80%;
   text-align:center;
 }
-
 .human{
   position:absolute;
   bottom:0;
   right:10%;
   max-height:50%;
 }
-
 .footer{
   position:absolute;
   bottom:10px;
@@ -116,69 +112,85 @@ h2{margin-bottom:15px;}
 </head>
 <body>
 
-<h2>Mobile-Friendly Poster Maker Pro</h2>
+<header>
+<img id="mainLogo" src="logo.png" alt="Site Logo">
+</header>
 
 <div class="controls">
-  <label>Logo</label>
-  <input type="file" id="logoUpload">
-  <br>
-  <label>Human Image</label>
-  <input type="file" id="humanUpload">
-  <br>
-  <label>Headline</label>
-  <input type="text" id="headlineInput" placeholder="Headline">
-  <br>
-  <label>Body Text</label>
-  <input type="text" id="bodyInput" placeholder="Description / Body Text">
-  <br>
-  <label>Background Preset</label>
-  <select id="bgSelect">
-    <option value="">None</option>
-    <option value="linear-gradient(135deg,#0f2027,#203a43,#2c5364)">Default Gradient</option>
-    <option value="linear-gradient(135deg,#ff416c,#ff4b2b)">Red Gradient</option>
-    <option value="linear-gradient(135deg,#00c6ff,#0072ff)">Blue Gradient</option>
-    <option value="linear-gradient(135deg,#f7971e,#ffd200)">Orange Gradient</option>
-  </select>
-  <br>
-  <label>Text Color</label>
-  <input type="color" id="textColor" value="#ffffff">
-  <br>
-  <label>Text Shadow / Glow</label>
-  <select id="textEffect">
-    <option value="none">None</option>
-    <option value="shadow">Shadow</option>
-    <option value="glow">Glow</option>
-  </select>
-  <br>
-  <label>Headline Size</label>
-  <input type="range" id="headlineSlider" min="16" max="60" value="32">
-  <br>
-  <label>Body Size</label>
-  <input type="range" id="bodySlider" min="12" max="36" value="16">
-  <br>
-  <label>Footer Position</label>
-  <input type="range" id="footerSlider" min="0" max="50" value="10">
-  <br>
-  <button onclick="downloadPoster()">Download PNG</button>
+<label>Logo (Watermark)</label>
+<input type="file" id="logoUpload"><br>
+
+<label>Human/Product Image</label>
+<input type="file" id="humanUpload"><br>
+
+<label>Headline</label>
+<input type="text" id="headlineInput" placeholder="Headline"><br>
+
+<label>Body Text</label>
+<input type="text" id="bodyInput" placeholder="Body Text"><br>
+
+<label>Footer Text</label>
+<input type="text" id="footerInput" placeholder="Phone | Website | Address"><br>
+
+<label>Background Preset</label>
+<select id="bgSelect">
+<option value="">None</option>
+<option value="linear-gradient(135deg,#0f2027,#203a43,#2c5364)">Default Gradient</option>
+<option value="linear-gradient(135deg,#ff416c,#ff4b2b)">Red Gradient</option>
+<option value="linear-gradient(135deg,#00c6ff,#0072ff)">Blue Gradient</option>
+<option value="linear-gradient(135deg,#f7971e,#ffd200)">Orange Gradient</option>
+</select><br>
+
+<label>Text Color</label>
+<input type="color" id="textColor" value="#ffffff"><br>
+
+<label>Text Shadow / Glow</label>
+<select id="textEffect">
+<option value="none">None</option>
+<option value="shadow">Shadow</option>
+<option value="glow">Glow</option>
+</select><br>
+
+<label>Headline Size</label>
+<input type="range" id="headlineSlider" min="16" max="60" value="32"><br>
+
+<label>Headline Up/Down</label>
+<input type="range" id="headlinePos" min="0" max="80" value="30"><br>
+
+<label>Body Size</label>
+<input type="range" id="bodySlider" min="12" max="36" value="16"><br>
+
+<label>Body Left/Right</label>
+<input type="range" id="bodyPos" min="0" max="80" value="10"><br>
+
+<label>Footer Position</label>
+<input type="range" id="footerSlider" min="0" max="50" value="10"><br>
+
+<button onclick="downloadPoster()">Download JPEG</button>
 </div>
 
 <div id="poster-container">
-  <div id="poster">
-    <div class="bgOverlay" id="bg"></div>
-    <img id="logo" class="logo">
-    <div id="headline" class="headline">Headline</div>
-    <div id="bodytext" class="bodytext">Description / Body Text</div>
-    <img id="human" class="human">
-    <div class="gradientFade"></div>
-    <div class="footer" id="footer">Phone | Website | Address</div>
-  </div>
+<div id="poster">
+<div class="bgOverlay" id="bg"></div>
+
+<img id="logo" class="logo-watermark">
+<img id="human" class="human">
+
+<div class="gradientFade"></div>
+
+<div id="headline" class="headline">Headline</div>
+<div id="bodytext" class="bodytext">Body Text</div>
+<div class="footer" id="footer">Phone | Website | Address</div>
+</div>
 </div>
 
 <script>
 const headlineInput = document.getElementById("headlineInput");
 const bodyInput = document.getElementById("bodyInput");
+const footerInput = document.getElementById("footerInput");
 const headline = document.getElementById("headline");
 const bodytext = document.getElementById("bodytext");
+const footer = document.getElementById("footer");
 const logo = document.getElementById("logo");
 const human = document.getElementById("human");
 const bg = document.getElementById("bg");
@@ -186,20 +198,22 @@ const textColor = document.getElementById("textColor");
 const textEffect = document.getElementById("textEffect");
 const headlineSlider = document.getElementById("headlineSlider");
 const bodySlider = document.getElementById("bodySlider");
+const headlinePos = document.getElementById("headlinePos");
+const bodyPos = document.getElementById("bodyPos");
 const footerSlider = document.getElementById("footerSlider");
-const footer = document.getElementById("footer");
 const bgSelect = document.getElementById("bgSelect");
 
-// Text inputs
+// Inputs
 headlineInput.oninput = ()=>{ headline.innerText = headlineInput.value; }
 bodyInput.oninput = ()=>{ bodytext.innerText = bodyInput.value; }
+footerInput.oninput = ()=>{ footer.innerText = footerInput.value; }
 
-// Logo
+// Logo upload (watermark)
 document.getElementById("logoUpload").onchange = e=>{
   logo.src = URL.createObjectURL(e.target.files[0]);
 }
 
-// Human
+// Human/Product upload
 document.getElementById("humanUpload").onchange = e=>{
   human.src = URL.createObjectURL(e.target.files[0]);
 }
@@ -209,7 +223,7 @@ bgSelect.onchange = ()=>{
   bg.style.background = bgSelect.value;
 }
 
-// Text Color
+// Text color
 textColor.oninput = ()=>{ 
   headline.style.color = textColor.value;
   bodytext.style.color = textColor.value;
@@ -221,30 +235,34 @@ textEffect.onchange = ()=>{
   if(textEffect.value=="shadow"){
     headline.style.textShadow = "2px 2px 5px black";
     bodytext.style.textShadow = "2px 2px 5px black";
+    footer.style.textShadow = "1px 1px 3px black";
   } else if(textEffect.value=="glow"){
     headline.style.textShadow = "0 0 10px white";
     bodytext.style.textShadow = "0 0 10px white";
+    footer.style.textShadow = "0 0 8px white";
   } else {
     headline.style.textShadow = "none";
     bodytext.style.textShadow = "none";
+    footer.style.textShadow = "none";
   }
 }
 
-// Slider controls
+// Sliders
 headlineSlider.oninput = ()=>{ headline.style.fontSize = headlineSlider.value+"px"; }
 bodySlider.oninput = ()=>{ bodytext.style.fontSize = bodySlider.value+"px"; }
+headlinePos.oninput = ()=>{ headline.style.top = headlinePos.value+"%"; }
+bodyPos.oninput = ()=>{ bodytext.style.left = bodyPos.value+"%"; }
 footerSlider.oninput = ()=>{ footer.style.bottom = footerSlider.value+"px"; }
 
-// Download
+// Download JPEG
 function downloadPoster(){
   html2canvas(document.getElementById("poster")).then(canvas=>{
     let link=document.createElement("a");
-    link.download="poster.png";
-    link.href=canvas.toDataURL();
+    link.download="poster.jpeg";
+    link.href=canvas.toDataURL("image/jpeg",0.95);
     link.click();
   });
 }
 </script>
-
 </body>
 </html>
