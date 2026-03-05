@@ -3,185 +3,291 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interactive Stylish Poster Maker</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Poster Maker Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Poppins',sans-serif;background:#f7f9fc;color:#111;display:flex;flex-direction:column;align-items:center;padding:20px;}
-h1{font-size:28px;text-align:center;margin-bottom:10px;}
-p{font-size:16px;color:#555;text-align:center;margin-bottom:20px;}
-button{padding:10px 24px;border:none;border-radius:8px;background:#667eea;color:white;font-weight:600;cursor:pointer;transition:.3s;margin-top:10px;}
-button:hover{background:#5a67d8;}
 
-/* Poster Wrapper */
-.poster-wrapper{
-  position:relative;
-  display:flex;
-  flex-direction:row;
-  width:800px;
-  max-width:95%;
-  border-radius:20px;
-  overflow:hidden;
-  margin-bottom:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.3);
-  min-height:400px;
+body{
+font-family:Poppins;
+background:#f4f6fb;
+padding:20px;
+text-align:center;
 }
 
-/* Background layer */
-.poster-bg{
-  position:absolute;
-  top:0;left:0;
-  width:100%;height:100%;
-  z-index:0;
-  background:linear-gradient(135deg,#0d1b2a,#1b2a4d);
-  background-size:cover;
-  background-position:center;
+h1{
+margin-bottom:20px;
 }
 
-/* Overlay under human image */
-.poster-overlay{
-  position:absolute;
-  bottom:0;
-  width:100%;
-  height:50%;
-  left:0;
-  background:linear-gradient(to top, rgba(13,27,42,1), rgba(13,27,42,0));
-  z-index:1;
+.controls{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+justify-content:center;
+margin-bottom:20px;
 }
 
-/* Content & image above overlay */
-.text-area, .model-area{position:relative;z-index:2;padding:40px;flex:1;}
-.text-area h2{font-size:36px;margin-bottom:15px;}
-.text-area h2 .highlight{color:#42A5F5;}
-.text-area p{color:#cfd8dc;margin-bottom:15px;}
-.text-area .quote{font-style:italic;color:#90caf9;}
-.model-area img{max-width:100%;border-radius:12px;}
+.controls input,
+.controls select{
+padding:8px;
+border-radius:6px;
+border:1px solid #ddd;
+}
 
-/* Footer */
+button{
+padding:10px 20px;
+border:none;
+border-radius:8px;
+background:#3b82f6;
+color:white;
+cursor:pointer;
+}
+
+.poster{
+width:900px;
+max-width:95%;
+height:500px;
+margin:auto;
+position:relative;
+border-radius:16px;
+overflow:hidden;
+display:flex;
+background:linear-gradient(135deg,#0f172a,#1e3a8a);
+color:white;
+}
+
+.poster.reverse{
+flex-direction:row-reverse;
+}
+
+.bg-circle{
+position:absolute;
+width:600px;
+height:600px;
+background:radial-gradient(circle,rgba(0,0,0,0.4),transparent);
+border-radius:50%;
+left:-200px;
+top:-150px;
+}
+
+.text-area{
+flex:1;
+padding:40px;
+text-align:left;
+display:flex;
+flex-direction:column;
+justify-content:center;
+z-index:2;
+}
+
+.headline{
+font-size:44px;
+font-weight:700;
+line-height:1.1;
+}
+
+.desc{
+margin-top:15px;
+opacity:0.85;
+}
+
+.quote{
+margin-top:10px;
+font-style:italic;
+color:#93c5fd;
+}
+
+.model{
+flex:1;
+display:flex;
+align-items:end;
+justify-content:center;
+z-index:2;
+}
+
+.model img{
+max-height:90%;
+}
+
+.bottom-overlay{
+position:absolute;
+bottom:0;
+width:100%;
+height:40%;
+background:linear-gradient(to top,#0f172a,transparent);
+}
+
+.logo{
+position:absolute;
+top:20px;
+left:20px;
+}
+
+.logo img{
+height:40px;
+}
+
 .footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 40px;
-  background:rgba(0,0,0,0.2);
-  font-size:14px;
+position:absolute;
+bottom:20px;
+width:100%;
+display:flex;
+justify-content:space-between;
+padding:0 40px;
+z-index:3;
 }
-.cta-button{padding:10px 25px;background:#42A5F5;border-radius:8px;font-weight:600;}
-.contact-info{text-align:right;}
-.contact-info .label{font-size:12px;color:#a0c4ff;}
-.contact-info .phone{font-weight:700;}
-.contact-info .website{font-size:12px;color:#cfd8dc;}
 
-/* Controls */
-.controls{max-width:800px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;}
-.controls input[type="text"], .controls input[type="file"], .controls select{padding:8px;border-radius:6px;border:1px solid #ddd;width:180px;}
+.cta{
+background:#3b82f6;
+padding:12px 26px;
+border-radius:30px;
+font-weight:600;
+}
+
+.contact{
+text-align:right;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>Interactive Facebook-Style Poster Maker</h1>
-<p>Edit text, image, layout, background & download</p>
+<h1>Poster Maker Pro</h1>
 
 <div class="controls">
-<input type="file" id="imageUpload" accept="image/*">
+
+<input type="file" id="logoUpload">
+<input type="file" id="modelUpload">
+
 <input type="text" id="headlineInput" placeholder="Headline">
-<input type="text" id="descriptionInput" placeholder="Description">
+<input type="text" id="descInput" placeholder="Description">
 <input type="text" id="quoteInput" placeholder="Quote">
-<select id="bgSelect">
-<option value="linear-gradient(135deg,#0d1b2a,#1b2a4d)">Dark Blue Gradient</option>
-<option value="linear-gradient(135deg,#1b2735,#090a0f)">Navy Black Gradient</option>
-<option value="url('bg1.jpg')">City Overlay 1</option>
-<option value="url('bg2.jpg')">City Overlay 2</option>
+
+<input type="text" id="phoneInput" placeholder="Phone">
+<input type="text" id="websiteInput" placeholder="Website">
+
+<select id="fontSelect">
+<option value="Poppins">Poppins</option>
+<option value="Montserrat">Montserrat</option>
 </select>
+
+<input type="color" id="colorPicker">
+
 <button onclick="switchLayout()">Switch Layout</button>
-<button onclick="downloadPoster('png')">Download PNG</button>
-<button onclick="downloadPoster('jpg')">Download JPG</button>
+<button onclick="downloadPoster()">Download PNG</button>
+
 </div>
 
-<div class="poster-wrapper" id="poster">
-  <div class="poster-bg" id="posterBg"></div>
-  <div class="poster-overlay"></div>
+<div class="poster" id="poster">
 
-  <div class="text-area" id="textArea">
-    <h2 id="headline"><span class="highlight">Digital</span> Marketing Agency</h2>
-    <p id="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-    <div class="quote" id="quote">"Find new opportunity with us"</div>
-  </div>
+<div class="bg-circle"></div>
 
-  <div class="model-area" id="modelArea">
-    <img id="modelImage" src="model.png" alt="Professional Model">
-  </div>
+<div class="logo">
+<img id="logoImg">
 </div>
+
+<div class="text-area">
+
+<div class="headline" id="headline">
+Digital Marketing Agency
+</div>
+
+<div class="desc" id="desc">
+Lorem ipsum dolor sit amet consectetur adipiscing elit
+</div>
+
+<div class="quote" id="quote">
+"Find new opportunity with us"
+</div>
+
+</div>
+
+<div class="model">
+<img id="modelImg">
+</div>
+
+<div class="bottom-overlay"></div>
 
 <div class="footer">
-<div class="cta-button">LEARN MORE</div>
-<div class="contact-info">
-<div class="label">More information call us</div>
-<div class="phone">📞 +880123456789</div>
-<div class="website">www.yourcompany.com</div>
+
+<div class="cta">LEARN MORE</div>
+
+<div class="contact">
+<div>More information call us</div>
+<div id="phone">000 123 456 789</div>
+<div id="website">www.website.com</div>
 </div>
+
 </div>
+
+</div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 <script>
-const poster = document.getElementById("poster");
-const textArea = document.getElementById("textArea");
-const modelArea = document.getElementById("modelArea");
-const headline = document.getElementById("headline");
-const description = document.getElementById("description");
-const quote = document.getElementById("quote");
-const modelImage = document.getElementById("modelImage");
-const posterBg = document.getElementById("posterBg");
 
-// Update text dynamically
-document.getElementById("headlineInput").addEventListener("input", e=>headline.innerText=e.target.value);
-document.getElementById("descriptionInput").addEventListener("input", e=>description.innerText=e.target.value);
-document.getElementById("quoteInput").addEventListener("input", e=>quote.innerText=e.target.value);
+const poster=document.getElementById("poster")
 
-// Update image
-document.getElementById("imageUpload").addEventListener("change", function(){
-  const reader = new FileReader();
-  reader.onload=function(e){ modelImage.src=e.target.result; }
-  reader.readAsDataURL(this.files[0]);
-});
-
-// Switch Layout
-let isTextLeft = true;
 function switchLayout(){
-  if(isTextLeft){
-    poster.insertBefore(modelArea, textArea);
-  } else {
-    poster.insertBefore(textArea, modelArea);
-  }
-  isTextLeft = !isTextLeft;
+poster.classList.toggle("reverse")
 }
 
-// Change background
-document.getElementById("bgSelect").addEventListener("change", e=>{
-  posterBg.style.background=e.target.value;
-  if(e.target.value.startsWith('url')){
-    posterBg.style.backgroundSize='cover';
-    posterBg.style.backgroundPosition='center';
-  } else {
-    posterBg.style.backgroundSize='auto';
-  }
-});
-
-// Download
-function downloadPoster(type){
-  html2canvas(poster).then(canvas=>{
-    const link=document.createElement("a");
-    link.download="poster."+type;
-    if(type==='jpg'){
-      link.href=canvas.toDataURL("image/jpeg",0.95);
-    } else {
-      link.href=canvas.toDataURL();
-    }
-    link.click();
-  });
+document.getElementById("headlineInput").oninput=e=>{
+headline.innerText=e.target.value
 }
+
+document.getElementById("descInput").oninput=e=>{
+desc.innerText=e.target.value
+}
+
+document.getElementById("quoteInput").oninput=e=>{
+quote.innerText=e.target.value
+}
+
+document.getElementById("phoneInput").oninput=e=>{
+phone.innerText=e.target.value
+}
+
+document.getElementById("websiteInput").oninput=e=>{
+website.innerText=e.target.value
+}
+
+document.getElementById("fontSelect").onchange=e=>{
+poster.style.fontFamily=e.target.value
+}
+
+document.getElementById("colorPicker").oninput=e=>{
+headline.style.color=e.target.value
+}
+
+document.getElementById("logoUpload").onchange=e=>{
+let reader=new FileReader()
+reader.onload=function(ev){
+logoImg.src=ev.target.result
+}
+reader.readAsDataURL(e.target.files[0])
+}
+
+document.getElementById("modelUpload").onchange=e=>{
+let reader=new FileReader()
+reader.onload=function(ev){
+modelImg.src=ev.target.result
+}
+reader.readAsDataURL(e.target.files[0])
+}
+
+function downloadPoster(){
+html2canvas(poster).then(canvas=>{
+let link=document.createElement("a")
+link.download="poster.png"
+link.href=canvas.toDataURL()
+link.click()
+})
+}
+
 </script>
 
 </body>
