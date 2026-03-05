@@ -1,196 +1,250 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Pro Poster Maker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile-Friendly Pro Poster Maker</title>
 
-<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-
 body{
-font-family:Arial;
-background:#111;
-color:white;
-padding:20px;
+  font-family:sans-serif;
+  background:#111;
+  color:white;
+  padding:10px;
+  text-align:center;
 }
+
+h2{margin-bottom:15px;}
 
 .controls{
-margin-bottom:20px;
+  margin-bottom:20px;
 }
 
-input,select,button{
-padding:8px;
-margin:5px;
+.controls input, .controls select, .controls button{
+  padding:6px;
+  margin:5px;
+  border-radius:5px;
+  border:none;
+}
+
+.controls label{margin-right:10px;}
+
+#poster-container{
+  width:100%;
+  max-width:400px; /* mobile-friendly preview */
+  margin:auto;
 }
 
 #poster{
-
-width:1080px;
-height:1080px;
-position:relative;
-
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-
-overflow:hidden;
+  width:100%;
+  aspect-ratio:1/1;
+  position:relative;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  overflow:hidden;
+  border-radius:10px;
 }
 
 .bgOverlay{
-position:absolute;
-width:100%;
-height:100%;
-background-size:cover;
-opacity:.25;
+  position:absolute;
+  width:100%;
+  height:100%;
+  background-size:cover;
+  opacity:.25;
 }
 
 .gradientFade{
-
-position:absolute;
-bottom:0;
-width:100%;
-height:50%;
-background:linear-gradient(to top,#000000cc,transparent);
-
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:50%;
+  background:linear-gradient(to top,#000000cc,transparent);
 }
 
 .logo{
-
-position:absolute;
-top:40px;
-left:40px;
-max-width:150px;
-
+  position:absolute;
+  top:10px;
+  left:10px;
+  max-width:80px;
 }
 
 .headline{
+  position:absolute;
+  top:30%;
+  left:10%;
+  font-size:2em;
+  font-weight:bold;
+  background:#00000088;
+  padding:5px 10px;
+  border-radius:5px;
+  width:80%;
+  text-align:center;
+}
 
-position:absolute;
-top:300px;
-left:100px;
-
-font-size:80px;
-font-weight:bold;
-
-background:#00000088;
-padding:20px 30px;
-border-radius:8px;
-
-cursor:move;
-
+.bodytext{
+  position:absolute;
+  top:50%;
+  left:10%;
+  font-size:1em;
+  background:#00000066;
+  padding:5px 10px;
+  border-radius:5px;
+  width:80%;
+  text-align:center;
 }
 
 .human{
-
-position:absolute;
-bottom:0;
-right:80px;
-max-height:900px;
-
-cursor:move;
-
+  position:absolute;
+  bottom:0;
+  right:10%;
+  max-height:50%;
 }
 
+.footer{
+  position:absolute;
+  bottom:10px;
+  left:10%;
+  width:80%;
+  text-align:center;
+  font-size:0.9em;
+  background:#00000044;
+  padding:5px 10px;
+  border-radius:5px;
+}
 </style>
 </head>
-
 <body>
 
-<h2>Pro Poster Generator</h2>
+<h2>Mobile-Friendly Poster Maker Pro</h2>
 
 <div class="controls">
-
-Logo
-<input type="file" id="logoUpload">
-
-Human Image
-<input type="file" id="humanUpload">
-
-Headline
-<input type="text" id="headlineInput" value="Digital Marketing">
-
-Background
-<select id="bgSelect">
-<option value="none">None</option>
-<option value="https://images.unsplash.com/photo-1492724441997-5dc865305da7">City</option>
-<option value="https://images.unsplash.com/photo-1492724724894-7464c27d0ceb">Office</option>
-<option value="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d">Work</option>
-<option value="https://images.unsplash.com/photo-1460925895917-afdab827c52f">Tech</option>
-<option value="https://images.unsplash.com/photo-1504384308090-c894fdcc538d">Business</option>
-</select>
-
-<button onclick="download()">Download PNG</button>
-
+  <label>Logo</label>
+  <input type="file" id="logoUpload">
+  <br>
+  <label>Human Image</label>
+  <input type="file" id="humanUpload">
+  <br>
+  <label>Headline</label>
+  <input type="text" id="headlineInput" placeholder="Headline">
+  <br>
+  <label>Body Text</label>
+  <input type="text" id="bodyInput" placeholder="Description / Body Text">
+  <br>
+  <label>Background Preset</label>
+  <select id="bgSelect">
+    <option value="">None</option>
+    <option value="linear-gradient(135deg,#0f2027,#203a43,#2c5364)">Default Gradient</option>
+    <option value="linear-gradient(135deg,#ff416c,#ff4b2b)">Red Gradient</option>
+    <option value="linear-gradient(135deg,#00c6ff,#0072ff)">Blue Gradient</option>
+    <option value="linear-gradient(135deg,#f7971e,#ffd200)">Orange Gradient</option>
+  </select>
+  <br>
+  <label>Text Color</label>
+  <input type="color" id="textColor" value="#ffffff">
+  <br>
+  <label>Text Shadow / Glow</label>
+  <select id="textEffect">
+    <option value="none">None</option>
+    <option value="shadow">Shadow</option>
+    <option value="glow">Glow</option>
+  </select>
+  <br>
+  <label>Headline Size</label>
+  <input type="range" id="headlineSlider" min="16" max="60" value="32">
+  <br>
+  <label>Body Size</label>
+  <input type="range" id="bodySlider" min="12" max="36" value="16">
+  <br>
+  <label>Footer Position</label>
+  <input type="range" id="footerSlider" min="0" max="50" value="10">
+  <br>
+  <button onclick="downloadPoster()">Download PNG</button>
 </div>
 
-<div id="poster">
-
-<div class="bgOverlay" id="bg"></div>
-
-<img id="logo" class="logo">
-
-<div id="headline" class="headline">Digital Marketing</div>
-
-<img id="human" class="human">
-
-<div class="gradientFade"></div>
-
+<div id="poster-container">
+  <div id="poster">
+    <div class="bgOverlay" id="bg"></div>
+    <img id="logo" class="logo">
+    <div id="headline" class="headline">Headline</div>
+    <div id="bodytext" class="bodytext">Description / Body Text</div>
+    <img id="human" class="human">
+    <div class="gradientFade"></div>
+    <div class="footer" id="footer">Phone | Website | Address</div>
+  </div>
 </div>
-
 
 <script>
+const headlineInput = document.getElementById("headlineInput");
+const bodyInput = document.getElementById("bodyInput");
+const headline = document.getElementById("headline");
+const bodytext = document.getElementById("bodytext");
+const logo = document.getElementById("logo");
+const human = document.getElementById("human");
+const bg = document.getElementById("bg");
+const textColor = document.getElementById("textColor");
+const textEffect = document.getElementById("textEffect");
+const headlineSlider = document.getElementById("headlineSlider");
+const bodySlider = document.getElementById("bodySlider");
+const footerSlider = document.getElementById("footerSlider");
+const footer = document.getElementById("footer");
+const bgSelect = document.getElementById("bgSelect");
 
-headlineInput.oninput=()=>{
-headline.innerText=headlineInput.value
+// Text inputs
+headlineInput.oninput = ()=>{ headline.innerText = headlineInput.value; }
+bodyInput.oninput = ()=>{ bodytext.innerText = bodyInput.value; }
+
+// Logo
+document.getElementById("logoUpload").onchange = e=>{
+  logo.src = URL.createObjectURL(e.target.files[0]);
 }
 
-logoUpload.onchange=e=>{
-logo.src=URL.createObjectURL(e.target.files[0])
+// Human
+document.getElementById("humanUpload").onchange = e=>{
+  human.src = URL.createObjectURL(e.target.files[0]);
 }
 
-humanUpload.onchange=e=>{
-human.src=URL.createObjectURL(e.target.files[0])
+// Background
+bgSelect.onchange = ()=>{
+  bg.style.background = bgSelect.value;
 }
 
-bgSelect.onchange=()=>{
-bg.style.backgroundImage=`url(${bgSelect.value})`
+// Text Color
+textColor.oninput = ()=>{ 
+  headline.style.color = textColor.value;
+  bodytext.style.color = textColor.value;
+  footer.style.color = textColor.value;
 }
 
-interact('.headline,.human').draggable({
-
-listeners:{
-move(event){
-
-let target=event.target
-
-let x=(parseFloat(target.getAttribute('data-x'))||0)+event.dx
-let y=(parseFloat(target.getAttribute('data-y'))||0)+event.dy
-
-target.style.transform=`translate(${x}px,${y}px)`
-
-target.setAttribute('data-x',x)
-target.setAttribute('data-y',y)
-
-}
+// Text Effect
+textEffect.onchange = ()=>{
+  if(textEffect.value=="shadow"){
+    headline.style.textShadow = "2px 2px 5px black";
+    bodytext.style.textShadow = "2px 2px 5px black";
+  } else if(textEffect.value=="glow"){
+    headline.style.textShadow = "0 0 10px white";
+    bodytext.style.textShadow = "0 0 10px white";
+  } else {
+    headline.style.textShadow = "none";
+    bodytext.style.textShadow = "none";
+  }
 }
 
-})
+// Slider controls
+headlineSlider.oninput = ()=>{ headline.style.fontSize = headlineSlider.value+"px"; }
+bodySlider.oninput = ()=>{ bodytext.style.fontSize = bodySlider.value+"px"; }
+footerSlider.oninput = ()=>{ footer.style.bottom = footerSlider.value+"px"; }
 
-function download(){
-
-html2canvas(document.querySelector("#poster")).then(canvas=>{
-
-let link=document.createElement("a")
-link.download="poster.png"
-link.href=canvas.toDataURL()
-link.click()
-
-})
-
+// Download
+function downloadPoster(){
+  html2canvas(document.getElementById("poster")).then(canvas=>{
+    let link=document.createElement("a");
+    link.download="poster.png";
+    link.href=canvas.toDataURL();
+    link.click();
+  });
 }
-
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 </body>
 </html>
