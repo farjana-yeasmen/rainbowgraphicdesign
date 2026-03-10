@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Poster Maker</title>
+
+<style>
+body{
+font-family:Arial, sans-serif;
+background:#f3f3f3;
+margin:20px;
+text-align:center;
+}
+
+.container{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+.controls{
+width:320px;
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+text-align:left;
+}
+
+.controls h3{
+margin-top:10px;
+margin-bottom:5px;
+}
+
+canvas{
+border:1px solid #ccc;
+background:#fff;
+}
+
+input[type="range"]{
+width:100%;
+}
+
+button{
+padding:10px 20px;
+margin-top:10px;
+border:none;
+background:#111;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Product Poster Maker</h2>
+
+<div class="container">
+
+<div class="controls">
+
+<h3>Background</h3>
+<select id="bgColor">
+<option value="#ffffff">White</option>
+<option value="#000000">Black</option>
+<option value="#ff4d4d">Red</option>
+<option value="#0066ff">Blue</option>
+<option value="#7a00cc">Purple</option>
+</select>
+<br><br>
+<input type="file" id="bgUpload">
+
+<h3>Product Image</h3>
+<input type="file" id="productUpload">
+<label>Right / Left</label>
+<input type="range" id="productX" min="-500" max="500" value="0">
+<label>Up / Down</label>
+<input type="range" id="productY" min="-500" max="500" value="0">
+
+<h3>Gradient</h3>
+<select id="gradient">
+<option value="none">None</option>
+<option value="black">Black</option>
+<option value="blue">Blue</option>
+<option value="red">Red</option>
+</select>
+
+<h3>Heading</h3>
+<input type="text" id="heading" placeholder="Heading text">
+<select id="headingAlign">
+<option value="center">Center</option>
+<option value="left">Left</option>
+<option value="right">Right</option>
+</select>
+<input type="range" id="headingX" min="-400" max="400" value="0">
+<input type="range" id="headingY" min="-400" max="400" value="-200">
+
+<h3>Description</h3>
+<input type="text" id="desc" placeholder="Description">
+<select id="descAlign">
+<option value="center">Center</option>
+<option value="left">Left</option>
+<option value="right">Right</option>
+</select>
+<input type="range" id="descX" min="-400" max="400" value="0">
+<input type="range" id="descY" min="-400" max="400" value="0">
+
+<h3>Contact</h3>
+<input type="text" id="contact" placeholder="Contact info">
+<select id="contactAlign">
+<option value="center">Center</option>
+<option value="left">Left</option>
+<option value="right">Right</option>
+</select>
+<input type="range" id="contactX" min="-400" max="400" value="0">
+<input type="range" id="contactY" min="-400" max="400" value="250">
+
+<h3>User Logo (optional)</h3>
+<input type="file" id="userLogoUpload">
+
+<button onclick="downloadImage()">Download JPEG</button>
+
+</div>
+
+<canvas id="canvas" width="1080" height="1080"></canvas>
+
+</div>
+
+<script>
+
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+let bgImage=null;
+let productImage=null;
+let userLogo=null;
+
+const fixedLogo=new Image();
+fixedLogo.src="logo.png";
+
+function loadImage(file,callback){
+const img=new Image();
+img.onload=()=>callback(img);
+img.src=URL.createObjectURL(file);
+}
+
+document.getElementById("bgUpload").onchange=e=>{
+loadImage(e.target.files[0],img=>{
+bgImage=img;
+draw();
+});
+};
+
+document.getElementById("productUpload").onchange=e=>{
+loadImage(e.target.files[0],img=>{
+productImage=img;
+draw();
+});
+};
+
+document.getElementById("userLogoUpload").onchange=e=>{
+loadImage(e.target.files[0],img=>{
+userLogo=img;
+draw();
+});
+};
+
+document.querySelectorAll("input,select").forEach(el=>{
+el.oninput=draw;
+});
+
+function draw(){
+
+ctx.clearRect(0,0,1080,1080);
+
+const bgColor=document.getElementById("bgColor").value;
+ctx.fillStyle=bgColor;
+ctx.fillRect(0,0,1080,1080);
+
+if(bgImage){
+ctx.drawImage(bgImage,0,0,1080,1080);
+}
+
+if(productImage){
+
+let x=540+Number(productX.value)-250;
+let y=540+Number(productY.value)-250;
+
+ctx.drawImage(productImage,x,y,500,500);
+}
+
+const gradientType=document.getElementById("gradient").value;
+
+if(gradientType!=="none"){
+
+let color="black";
+if(gradientType==="blue")color="blue";
+if(gradientType==="red")color="red";
+
+const grad=ctx.createLinearGradient(0,0,0,1080);
+
+grad.addColorStop(0,`rgba(0,0,0,0.8)`);
+grad.addColorStop(0.5,`rgba(0,0,0,0)`);
+grad.addColorStop(1,`rgba(0,0,0,0.8)`);
+
+ctx.fillStyle=grad;
+ctx.fillRect(0,0,1080,1080);
+
+}
+
+drawText("heading",60);
+drawText("desc",40);
+drawText("contact",36);
+
+if(userLogo){
+ctx.drawImage(userLogo,850,850,180,180);
+}
+
+if(fixedLogo.complete){
+ctx.drawImage(fixedLogo,20,20,120,120);
+}
+
+}
+
+function drawText(id,size){
+
+const text=document.getElementById(id).value;
+if(!text)return;
+
+const align=document.getElementById(id+"Align").value;
+const xOffset=Number(document.getElementById(id+"X").value);
+const yOffset=Number(document.getElementById(id+"Y").value);
+
+ctx.fillStyle="white";
+ctx.font="bold "+size+"px Arial";
+
+ctx.textAlign=align;
+
+let baseX=540;
+
+if(align==="left")baseX=100;
+if(align==="right")baseX=980;
+
+ctx.fillText(text,baseX+xOffset,540+yOffset);
+
+}
+
+function downloadImage(){
+
+const link=document.createElement("a");
+link.download="poster.jpg";
+link.href=canvas.toDataURL("image/jpeg",0.95);
+link.click();
+
+}
+
+draw();
+
+</script>
+
+</body>
+</html>
