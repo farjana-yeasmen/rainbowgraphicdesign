@@ -1,7 +1,10 @@
-<!DOCTYPE html><html lang="en">  <head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>Rainbow Graphic Design</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"><style>  *{margin:0;padding:0;box-sizing:border-box}
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rainbow Graphic Design</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"><style>
+
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
 font-family:'Poppins',sans-serif;
@@ -33,26 +36,64 @@ width:220px;
 max-width:90%;
 }
 
-/* HERO */
+/* HERO PREMIUM */
 
 .hero{
 position:relative;
 width:100%;
+height:500px;
 overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+color:white;
 }
 
 .hero img{
+position:absolute;
 width:100%;
-height:420px;
+height:100%;
 object-fit:cover;
-display:block;
+top:0;
+left:0;
+z-index:1;
+}
+
+/* dark overlay */
+
+.hero::after{
+content:"";
+position:absolute;
+width:100%;
+height:100%;
+top:0;
+left:0;
+background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.6));
+z-index:2;
+}
+
+/* hero content */
+
+.hero-content{
+position:relative;
+z-index:3;
+padding:20px;
+}
+
+.hero h1{
+font-size:42px;
+font-weight:700;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:18px;
+margin-bottom:25px;
+opacity:.9;
 }
 
 .hero-btn{
-position:absolute;
-bottom:40px;
-left:50%;
-transform:translateX(-50%);
 padding:16px 36px;
 border:none;
 border-radius:8px;
@@ -166,12 +207,19 @@ margin-top:60px;
 
 @media(max-width:768px){
 
-.hero img{
-height:260px;
+.hero{
+height:360px;
+}
+
+.hero h1{
+font-size:28px;
+}
+
+.hero p{
+font-size:15px;
 }
 
 .hero-btn{
-bottom:20px;
 padding:12px 24px;
 font-size:14px;
 }
@@ -184,52 +232,54 @@ padding:60px 15px;
 
 </style></head><body><header class="navbar">
 <img src="logo.png" class="nav-logo">
+</header><section class="hero"><img src="coverphoto.jpeg"><div class="hero-content"><h1>Rainbow Graphic Design</h1><p>Create Posters, News Cards & Graphics Instantly</p><button class="hero-btn" onclick="scrollToTools()">Start Creating</button>
 
-</header><section class="hero"><img src="Coverphoto.jpeg"><button class="hero-btn" onclick="scrollToTools()">Start Creating</button>  </section><section class="tools" id="tools"><h2>Our Tools</h2><div class="container"><div class="card">  
-<div class="tool-icon">🌙</div>  
-<h3>Eid Poster Generator</h3>  
-<p>Create beautiful Eid greeting posters.</p>  
-<a href="eid-poster.html"><button>Open Tool</button></a>  
-</div><div class="card">  
-<div class="tool-icon">🕌</div>  
-<h3>BNP Eid Poster</h3>  
-<p>Create BNP themed Eid posters easily.</p>  
-<a href="bnp-eid-poster.html"><button>Open Tool</button></a>  
-</div><div class="card">  
-<div class="tool-icon">📰</div>  
-<span class="badge popular">POPULAR</span>  
-<h3>News Card Maker</h3>  
-<p>Create modern news graphics.</p>  
-<a href="news-card.html"><button>Open Tool</button></a>  
-</div><div class="card">  
-<div class="tool-icon">🖼️</div>  
-<h3>Photo Card Generator</h3>  
-<p>Design stylish photo cards.</p>  
-<a href="poster-maker.html"><button>Open Tool</button></a>  
-</div><div class="card">  
-<div class="tool-icon">🎨</div>  
-<span class="badge pro">PRO</span>  
-<h3>Poster Maker</h3>  
-<p>Advanced drag, shape & sticker editor.</p>  
-<a href="poster-maker-pro.html"><button>Open Pro</button></a>  
-</div><div class="card">  
-<div class="tool-icon">📢</div>  
-<span class="badge featured">NEW</span>  
-<h3>Advertising Poster Maker</h3>  
-<p>Create product advertising posters easily.</p>  
-<a href="advertising-poster-maker.html"><button>Open Tool</button></a>  
-</div><div class="card">  
-<div class="tool-icon">🖼</div>  
-<h3>Frame Generator</h3>  
-<p>Add creative frames to images.</p>  
-<button disabled>Coming Soon</button>  
-</div></div>  
-</section><footer>  
-© 2026 RainbowGraphicDesign | FarjanaLema | All Rights Reserved  
-</footer><script>  function scrollToTools(){
+</div></section><section class="tools" id="tools"><h2>Our Tools</h2><div class="container"><div class="card">
+<div class="tool-icon">🌙</div>
+<h3>Eid Poster Generator</h3>
+<p>Create beautiful Eid greeting posters.</p>
+<a href="eid-poster.html"><button>Open Tool</button></a>
+</div><div class="card">
+<div class="tool-icon">🕌</div>
+<h3>BNP Eid Poster</h3>
+<p>Create BNP themed Eid posters easily.</p>
+<a href="bnp-eid-poster.html"><button>Open Tool</button></a>
+</div><div class="card">
+<div class="tool-icon">📰</div>
+<span class="badge popular">POPULAR</span>
+<h3>News Card Maker</h3>
+<p>Create modern news graphics.</p>
+<a href="news-card.html"><button>Open Tool</button></a>
+</div><div class="card">
+<div class="tool-icon">🖼️</div>
+<h3>Photo Card Generator</h3>
+<p>Design stylish photo cards.</p>
+<a href="poster-maker.html"><button>Open Tool</button></a>
+</div><div class="card">
+<div class="tool-icon">🎨</div>
+<span class="badge pro">PRO</span>
+<h3>Poster Maker</h3>
+<p>Advanced drag, shape & sticker editor.</p>
+<a href="poster-maker-pro.html"><button>Open Pro</button></a>
+</div><div class="card">
+<div class="tool-icon">📢</div>
+<span class="badge featured">NEW</span>
+<h3>Advertising Poster Maker</h3>
+<p>Create product advertising posters easily.</p>
+<a href="tools/advertising-poster-maker.html"><button>Open Tool</button></a>
+</div><div class="card">
+<div class="tool-icon">🖼</div>
+<h3>Frame Generator</h3>
+<p>Add creative frames to images.</p>
+<button disabled>Coming Soon</button>
+</div></div>
+</section><footer>
+© 2026 RainbowGraphicDesign | FarjanaLema | All Rights Reserved
+</footer><script>
+
+function scrollToTools(){
 document.getElementById("tools").scrollIntoView({behavior:"smooth"})
 }
 
 </script></body>
-
 </html>
