@@ -1,169 +1,235 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rainbow Graphic Design</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!DOCTYPE html><html lang="en">  <head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Rainbow Graphic Design</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"><style>  *{margin:0;padding:0;box-sizing:border-box}
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Poppins',sans-serif;background:white;color:#111;}
-a{text-decoration:none;}
-button{cursor:pointer;transition:.3s;}
-button:focus{outline:none;}
+body{
+font-family:'Poppins',sans-serif;
+background:white;
+color:#111;
+}
+
+a{text-decoration:none}
+
+button{
+cursor:pointer;
+transition:.3s;
+}
+
+button:focus{outline:none}
 
 /* NAVBAR */
-.navbar{display:flex;justify-content:center;align-items:center;padding:20px;border-bottom:1px solid #eee;}
-.nav-logo{width:220px;max-width:90%;}
+
+.navbar{
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+border-bottom:1px solid #eee;
+}
+
+.nav-logo{
+width:220px;
+max-width:90%;
+}
 
 /* HERO */
-.hero{
-  padding:80px 20px;
-  text-align:center;
-  background:linear-gradient(135deg,#667eea,#764ba2);
-  color:white;
-}
-.hero h1{font-size:42px;font-weight:700;margin-bottom:15px;}
-.hero p{color:#f0f0f0;margin-bottom:30px;font-size:18px;}
-.hero button{
-  padding:16px 36px;
-  border:none;
-  border-radius:8px;
-  background:#ff5e62;
-  color:white;
-  font-weight:600;
-  font-size:16px;
-}
-.hero button:hover{background:#e11d48;}
 
-/* TOOLS SECTION */
-.tools{
-  padding:80px 20px;
-  max-width:1200px;
-  margin:auto;
+.hero{
+position:relative;
+width:100%;
+overflow:hidden;
 }
-.tools h2{text-align:center;font-size:32px;margin-bottom:50px;}
+
+.hero img{
+width:100%;
+height:420px;
+object-fit:cover;
+display:block;
+}
+
+.hero-btn{
+position:absolute;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+padding:16px 36px;
+border:none;
+border-radius:8px;
+background:#ff5e62;
+color:white;
+font-weight:600;
+font-size:16px;
+}
+
+.hero-btn:hover{
+background:#e11d48;
+}
+
+/* TOOLS */
+
+.tools{
+padding:80px 20px;
+max-width:1200px;
+margin:auto;
+}
+
+.tools h2{
+text-align:center;
+font-size:32px;
+margin-bottom:50px;
+}
 
 .container{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:30px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
 }
 
 /* CARD */
-.card{
-  background:#f8fafc;
-  padding:30px 20px;
-  border-radius:16px;
-  text-align:center;
-  transition:.4s;
-  border:1px solid #eee;
-  position:relative;
-}
-.card:hover{
-  transform:translateY(-8px);
-  box-shadow:0 15px 35px rgba(0,0,0,0.1);
-}
-.card h3{margin-bottom:12px;font-size:20px;}
-.card p{font-size:14px;color:#555;margin-bottom:18px;}
-.card button{
-  padding:10px 22px;
-  border:none;
-  border-radius:6px;
-  background:#111;
-  color:white;
-  font-weight:600;
-}
-.card button:hover{background:#333;}
 
-/* PRO BADGE */
-.pro-badge{
-  position:absolute;
-  top:12px;
-  right:12px;
-  background:#e11d48;
-  color:white;
-  font-size:12px;
-  font-weight:700;
-  padding:3px 8px;
-  border-radius:6px;
+.card{
+background:#f8fafc;
+padding:30px 20px;
+border-radius:16px;
+text-align:center;
+transition:.4s;
+border:1px solid #eee;
+position:relative;
 }
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 15px 35px rgba(0,0,0,0.1);
+}
+
+.card h3{
+margin-bottom:10px;
+font-size:20px;
+}
+
+.card p{
+font-size:14px;
+color:#555;
+margin-bottom:18px;
+}
+
+.card button{
+padding:10px 22px;
+border:none;
+border-radius:6px;
+background:#111;
+color:white;
+font-weight:600;
+}
+
+.card button:hover{
+background:#333;
+}
+
+/* ICON */
+
+.tool-icon{
+font-size:34px;
+margin-bottom:10px;
+}
+
+/* BADGES */
+
+.badge{
+position:absolute;
+top:12px;
+right:12px;
+font-size:11px;
+font-weight:700;
+padding:4px 8px;
+border-radius:6px;
+color:white;
+}
+
+.pro{background:#e11d48}
+.featured{background:#2563eb}
+.popular{background:#16a34a}
 
 /* FOOTER */
+
 footer{
-  border-top:1px solid #eee;
-  padding:30px;
-  text-align:center;
-  font-size:14px;
-  color:#777;
-  margin-top:60px;
+border-top:1px solid #eee;
+padding:30px;
+text-align:center;
+font-size:14px;
+color:#777;
+margin-top:60px;
 }
-</style>
-</head>
 
-<body>
-<header class="navbar">
-  <img src="logo.png" class="nav-logo" alt="Rainbow Graphic Design Logo">
-</header>
+/* MOBILE */
 
-<section class="hero">
-  <h1>Create Stunning Designs Easily</h1>
-  <p>Free online tools for posters, cards and social media graphics.</p>
-  <button onclick="scrollToTools()">Start Creating</button>
-</section>
+@media(max-width:768px){
 
-<section class="tools" id="tools">
-<h2>Our Tools</h2>
-<div class="container">
-
-  <div class="card">
-    <h3>Eid Poster Generator</h3>
-    <p>Create beautiful Eid greeting posters.</p>
-    <a href="eid-poster.html"><button>Open Tool</button></a>
-  </div>
-
-  <div class="card">
-    <h3>BNP Eid Poster</h3>
-    <p>Create BNP themed Eid posters easily.</p>
-    <a href="bnp-eid-poster.html"><button>Open Tool</button></a>
-  </div>
-
-  <div class="card">
-    <h3>News Card Maker</h3>
-    <p>Create modern news graphics.</p>
-    <a href="news-card.html"><button>Open Tool</button></a>
-  </div>
-
-  <div class="card">
-    <h3>Photo Card Generator</h3>
-    <p>Design stylish photo cards.</p>
-    <a href="poster-maker.html"><button>Open Tool</button></a>
-  </div>
-
-  <div class="card">
-    <h3>Poster Maker <span class="pro-badge">PRO</span></h3>
-    <p>Advanced drag, shape & sticker editor.</p>
-    <a href="poster-maker-pro.html"><button>Open Pro</button></a>
-  </div>
-
-  <div class="card">
-    <h3>Frame Generator</h3>
-    <p>Add creative frames to images.</p>
-    <button disabled>Coming Soon</button>
-  </div>
-
-</div>
-</section>
-
-<footer>
-© 2026 RainbowGraphicDesign | FarjanaLema | All Rights Reserved
-</footer>
-
-<script>
-function scrollToTools(){
-  document.getElementById("tools").scrollIntoView({behavior:"smooth"});
+.hero img{
+height:260px;
 }
-</script>
-</body>
+
+.hero-btn{
+bottom:20px;
+padding:12px 24px;
+font-size:14px;
+}
+
+.tools{
+padding:60px 15px;
+}
+
+}
+
+</style></head><body><header class="navbar">
+<img src="logo.png" class="nav-logo">
+
+</header><section class="hero"><img src="Coverphoto.jpeg"><button class="hero-btn" onclick="scrollToTools()">Start Creating</button>  </section><section class="tools" id="tools"><h2>Our Tools</h2><div class="container"><div class="card">  
+<div class="tool-icon">🌙</div>  
+<h3>Eid Poster Generator</h3>  
+<p>Create beautiful Eid greeting posters.</p>  
+<a href="eid-poster.html"><button>Open Tool</button></a>  
+</div><div class="card">  
+<div class="tool-icon">🕌</div>  
+<h3>BNP Eid Poster</h3>  
+<p>Create BNP themed Eid posters easily.</p>  
+<a href="bnp-eid-poster.html"><button>Open Tool</button></a>  
+</div><div class="card">  
+<div class="tool-icon">📰</div>  
+<span class="badge popular">POPULAR</span>  
+<h3>News Card Maker</h3>  
+<p>Create modern news graphics.</p>  
+<a href="news-card.html"><button>Open Tool</button></a>  
+</div><div class="card">  
+<div class="tool-icon">🖼️</div>  
+<h3>Photo Card Generator</h3>  
+<p>Design stylish photo cards.</p>  
+<a href="poster-maker.html"><button>Open Tool</button></a>  
+</div><div class="card">  
+<div class="tool-icon">🎨</div>  
+<span class="badge pro">PRO</span>  
+<h3>Poster Maker</h3>  
+<p>Advanced drag, shape & sticker editor.</p>  
+<a href="poster-maker-pro.html"><button>Open Pro</button></a>  
+</div><div class="card">  
+<div class="tool-icon">📢</div>  
+<span class="badge featured">NEW</span>  
+<h3>Advertising Poster Maker</h3>  
+<p>Create product advertising posters easily.</p>  
+<a href="advertising-poster-maker.html"><button>Open Tool</button></a>  
+</div><div class="card">  
+<div class="tool-icon">🖼</div>  
+<h3>Frame Generator</h3>  
+<p>Add creative frames to images.</p>  
+<button disabled>Coming Soon</button>  
+</div></div>  
+</section><footer>  
+© 2026 RainbowGraphicDesign | FarjanaLema | All Rights Reserved  
+</footer><script>  function scrollToTools(){
+document.getElementById("tools").scrollIntoView({behavior:"smooth"})
+}
+
+</script></body>
+
 </html>
