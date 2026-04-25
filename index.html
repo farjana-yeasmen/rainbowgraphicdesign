@@ -1,285 +1,580 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rainbow Graphic Design</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet"><style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rainbow Graphic Design</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;700;900&family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --c1: #ff2d78;
+      --c2: #ff6a00;
+      --c3: #ffcc00;
+      --c4: #00e5ff;
+      --c5: #a259ff;
+      --bg: #07070f;
+      --card-bg: rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.09);
+      --text: #f0f0f0;
+      --sub: #888;
+    }
 
-*{margin:0;padding:0;box-sizing:border-box}
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-body{
-font-family:'Poppins',sans-serif;
-background:white;
-color:#111;
-}
+    html { scroll-behavior: smooth; }
 
-a{text-decoration:none}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Hind Siliguri', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
 
-button{
-cursor:pointer;
-transition:.3s;
-}
+    /* ── CUSTOM CURSOR ── */
+    #cursor {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--c1);
+      pointer-events: none;
+      transition: transform .15s ease, background .3s;
+      mix-blend-mode: screen;
+    }
+    #cursor-ring {
+      position: fixed; top: 0; left: 0; z-index: 9998;
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,45,120,.5);
+      pointer-events: none;
+      transition: transform .35s ease, border-color .3s;
+    }
 
-button:focus{outline:none}
+    /* ── CANVAS BACKGROUND ── */
+    #bg-canvas {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+    }
 
-/* NAVBAR */
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      opacity: .55;
+      pointer-events: none;
+    }
 
-.navbar{
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
-border-bottom:1px solid #eee;
-}
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 18px 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(7,7,15,.75);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--card-border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none;
+    }
+    .nav-logo img {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--c1);
+      object-fit: cover;
+    }
+    .nav-logo span {
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 900; font-size: 1.15rem;
+      background: linear-gradient(90deg, var(--c1), var(--c4));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: var(--sub); text-decoration: none; font-size: .9rem;
+      transition: color .3s;
+      letter-spacing: .04em;
+    }
+    .nav-links a:hover { color: var(--c4); }
 
-.nav-logo{
-width:220px;
-max-width:90%;
-}
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 2;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 5% 60px;
+    }
+    .hero-inner { max-width: 800px; }
 
-/* HERO PREMIUM */
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,45,120,.12);
+      border: 1px solid rgba(255,45,120,.3);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: .78rem; color: var(--c1);
+      letter-spacing: .08em; text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: fadeUp .8s .2s both;
+    }
+    .badge span { width: 7px; height: 7px; border-radius: 50%; background: var(--c1); animation: pulse 1.5s infinite; }
 
-.hero{
-position:relative;
-width:100%;
-height:500px;
-overflow:hidden;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-color:white;
-}
+    .hero h1 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: clamp(2.6rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -.02em;
+      animation: fadeUp .8s .4s both;
+    }
+    .hero h1 .line1 { display: block; color: #fff; }
+    .hero h1 .line2 {
+      display: block;
+      background: linear-gradient(90deg, var(--c1) 0%, var(--c3) 50%, var(--c4) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-size: 200%; animation: shimmer 4s linear infinite, fadeUp .8s .4s both;
+    }
 
-.hero img{
-position:absolute;
-width:100%;
-height:100%;
-object-fit:cover;
-top:0;
-left:0;
-z-index:1;
-}
+    .hero p {
+      margin-top: 20px;
+      font-size: 1.05rem; color: var(--sub); line-height: 1.7;
+      animation: fadeUp .8s .6s both;
+    }
 
-/* dark overlay */
+    .hero-btns {
+      margin-top: 38px;
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp .8s .8s both;
+    }
+    .btn-primary {
+      padding: 15px 38px;
+      background: linear-gradient(135deg, var(--c1), var(--c5));
+      border: none; border-radius: 999px;
+      color: #fff; font-size: .95rem; font-weight: 700;
+      cursor: none; text-decoration: none;
+      position: relative; overflow: hidden;
+      transition: transform .3s, box-shadow .3s;
+      box-shadow: 0 0 30px rgba(255,45,120,.35);
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,.15);
+      transform: translateX(-100%) skewX(-20deg);
+      transition: transform .5s;
+    }
+    .btn-primary:hover::after { transform: translateX(120%) skewX(-20deg); }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(255,45,120,.55); }
 
-.hero::after{
-content:"";
-position:absolute;
-width:100%;
-height:100%;
-top:0;
-left:0;
-background:linear-gradient(rgba(0,0,0,0.4),rgba(0,0,0,0.6));
-z-index:2;
-}
+    .btn-ghost {
+      padding: 14px 32px;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      border-radius: 999px;
+      color: var(--text); font-size: .95rem;
+      cursor: none; text-decoration: none;
+      transition: border-color .3s, color .3s, transform .3s;
+    }
+    .btn-ghost:hover { border-color: var(--c4); color: var(--c4); transform: translateY(-3px); }
 
-/* hero content */
+    /* ── STATS BAR ── */
+    .stats {
+      position: relative; z-index: 2;
+      display: flex; justify-content: center; gap: 60px; flex-wrap: wrap;
+      padding: 36px 5%;
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      background: rgba(255,255,255,.02);
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 2rem; font-weight: 900;
+      background: linear-gradient(90deg, var(--c4), var(--c5));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-label { font-size: .8rem; color: var(--sub); margin-top: 4px; letter-spacing: .06em; }
 
-.hero-content{
-position:relative;
-z-index:3;
-padding:20px;
-}
+    /* ── SECTION TITLE ── */
+    .section-title {
+      text-align: center; padding: 80px 5% 50px;
+      position: relative; z-index: 2;
+    }
+    .section-title .eyebrow {
+      font-size: .75rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--c4); margin-bottom: 12px;
+    }
+    .section-title h2 {
+      font-family: 'Exo 2', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 900; color: #fff;
+    }
 
-.hero h1{
-font-size:42px;
-font-weight:700;
-margin-bottom:10px;
-}
+    /* ── TOOLS GRID ── */
+    .tools-grid {
+      position: relative; z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 22px;
+      padding: 0 5% 100px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-.hero p{
-font-size:18px;
-margin-bottom:25px;
-opacity:.9;
-}
+    .tool-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      position: relative; overflow: hidden;
+      transition: transform .4s cubic-bezier(.23,1,.32,1), box-shadow .4s, border-color .4s;
+      animation: fadeUp .6s both;
+      text-decoration: none; color: inherit;
+      display: block;
+    }
+    .tool-card:nth-child(1) { animation-delay: .1s; }
+    .tool-card:nth-child(2) { animation-delay: .18s; }
+    .tool-card:nth-child(3) { animation-delay: .26s; }
+    .tool-card:nth-child(4) { animation-delay: .34s; }
+    .tool-card:nth-child(5) { animation-delay: .42s; }
+    .tool-card:nth-child(6) { animation-delay: .50s; }
+    .tool-card:nth-child(7) { animation-delay: .58s; }
 
-.hero-btn{
-padding:16px 36px;
-border:none;
-border-radius:8px;
-background:#ff5e62;
-color:white;
-font-weight:600;
-font-size:16px;
-}
+    .tool-card::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: 20px;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.07) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .4s;
+      pointer-events: none;
+    }
+    .tool-card:hover::before { opacity: 1; }
+    .tool-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
+      border-color: rgba(255,255,255,.18);
+    }
 
-.hero-btn:hover{
-background:#e11d48;
-}
+    .card-glow {
+      position: absolute; top: -40px; right: -40px;
+      width: 120px; height: 120px; border-radius: 50%;
+      filter: blur(50px); opacity: .4;
+      pointer-events: none; transition: opacity .4s;
+    }
+    .tool-card:hover .card-glow { opacity: .7; }
 
-/* TOOLS */
+    .card-badge {
+      position: absolute; top: 16px; right: 16px;
+      font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+      padding: 4px 10px; border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .badge-popular { background: rgba(255,204,0,.15); color: var(--c3); border: 1px solid rgba(255,204,0,.3); }
+    .badge-pro { background: rgba(162,89,255,.15); color: var(--c5); border: 1px solid rgba(162,89,255,.3); }
+    .badge-new { background: rgba(0,229,255,.15); color: var(--c4); border: 1px solid rgba(0,229,255,.3); }
+    .badge-soon { background: rgba(255,255,255,.07); color: var(--sub); border: 1px solid var(--card-border); }
 
-.tools{
-padding:80px 20px;
-max-width:1200px;
-margin:auto;
-}
+    .card-icon {
+      font-size: 2.6rem; margin-bottom: 18px;
+      display: block; line-height: 1;
+      filter: drop-shadow(0 0 12px currentColor);
+    }
+    .card-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: #fff; margin-bottom: 8px;
+    }
+    .card-desc { font-size: .88rem; color: var(--sub); line-height: 1.6; }
 
-.tools h2{
-text-align:center;
-font-size:32px;
-margin-bottom:50px;
-}
+    .card-arrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 22px;
+      font-size: .82rem; font-weight: 600; letter-spacing: .05em;
+      opacity: 0; transform: translateX(-8px);
+      transition: opacity .3s, transform .3s;
+    }
+    .tool-card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+    .card-arrow.disabled { color: var(--sub); }
 
-.container{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:30px;
-}
+    /* ── SURPRISE BUTTON ── */
+    .surprise-section {
+      position: relative; z-index: 2;
+      text-align: center; padding: 20px 5% 100px;
+    }
+    .surprise-section p { color: var(--sub); margin-bottom: 24px; font-size: .95rem; }
+    .btn-surprise {
+      padding: 18px 50px;
+      background: transparent;
+      border: 2px solid transparent;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 1rem; font-weight: 700;
+      cursor: none;
+      position: relative;
+      background-clip: padding-box;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .btn-surprise::before {
+      content: '';
+      position: absolute; inset: -2px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--c1), var(--c3), var(--c4), var(--c5), var(--c1));
+      background-size: 300%;
+      animation: rainbowMove 3s linear infinite;
+      z-index: -1;
+    }
+    .btn-surprise::after {
+      content: '';
+      position: absolute; inset: 2px;
+      border-radius: 999px;
+      background: var(--bg);
+      z-index: -1;
+    }
+    .btn-surprise:hover { transform: scale(1.06); box-shadow: 0 0 50px rgba(255,45,120,.4); }
 
-/* CARD */
+    /* ── SPEED DIAL ── */
+    .speed-dial {
+      position: fixed; bottom: 32px; right: 32px; z-index: 200;
+    }
+    .speed-dial-btn {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--c1), var(--c5));
+      border: none; cursor: none;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 0 25px rgba(255,45,120,.5);
+      transition: transform .3s, box-shadow .3s;
+      position: relative; z-index: 2;
+    }
+    .speed-dial-btn:hover { transform: scale(1.1) rotate(45deg); }
+    .speed-dial-items {
+      position: absolute; bottom: 70px; right: 0;
+      display: flex; flex-direction: column; gap: 12px;
+      opacity: 0; pointer-events: none;
+      transform: translateY(20px);
+      transition: opacity .3s, transform .3s;
+    }
+    .speed-dial:hover .speed-dial-items { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .dial-item {
+      display: flex; align-items: center; gap: 10px;
+      justify-content: flex-end;
+      text-decoration: none; color: var(--text);
+    }
+    .dial-label {
+      background: rgba(7,7,15,.9);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px; border-radius: 999px;
+      font-size: .8rem; white-space: nowrap;
+      backdrop-filter: blur(10px);
+    }
+    .dial-icon {
+      width: 42px; height: 42px; border-radius: 50%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      transition: transform .2s, background .2s;
+      flex-shrink: 0;
+    }
+    .dial-item:hover .dial-icon { background: rgba(255,45,120,.2); transform: scale(1.1); }
 
-.card{
-background:#f8fafc;
-padding:30px 20px;
-border-radius:16px;
-text-align:center;
-transition:.4s;
-border:1px solid #eee;
-position:relative;
-}
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 2;
+      text-align: center;
+      padding: 40px 5%;
+      border-top: 1px solid var(--card-border);
+      color: var(--sub); font-size: .82rem;
+    }
+    footer strong {
+      background: linear-gradient(90deg, var(--c1), var(--c4));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
 
-.card:hover{
-transform:translateY(-8px);
-box-shadow:0 15px 35px rgba(0,0,0,0.1);
-}
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
 
-.card h3{
-margin-bottom:10px;
-font-size:20px;
-}
+    /* ── MODE TOGGLE ── */
+    .mode-toggle {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 999px; padding: 4px;
+    }
+    .mode-btn {
+      padding: 6px 14px; border-radius: 999px; border: none;
+      font-size: .75rem; font-weight: 600; cursor: none;
+      transition: background .3s, color .3s;
+      background: transparent; color: var(--sub);
+    }
+    .mode-btn.active { background: linear-gradient(135deg, var(--c1), var(--c5)); color: #fff; }
 
-.card p{
-font-size:14px;
-color:#555;
-margin-bottom:18px;
-}
+    /* ── NEON MODE ── */
+    body.neon {
+      --bg: #000008;
+      --card-bg: rgba(0,229,255,.04);
+      --card-border: rgba(0,229,255,.2);
+      --text: #e0ffff;
+      --sub: rgba(0,229,255,.6);
+    }
+    body.neon .tool-card { box-shadow: 0 0 20px rgba(0,229,255,.1); }
+    body.neon .tool-card:hover { box-shadow: 0 0 40px rgba(0,229,255,.3); border-color: var(--c4); }
+    body.neon nav { border-bottom-color: rgba(0,229,255,.2); }
 
-.card button{
-padding:10px 22px;
-border:none;
-border-radius:6px;
-background:#111;
-color:white;
-font-weight:600;
-}
+    /* ── LIGHT MODE ── */
+    body.light {
+      --bg: #f5f5f8;
+      --card-bg: rgba(255,255,255,.85);
+      --card-border: rgba(0,0,0,.08);
+      --text: #111;
+      --sub: #666;
+    }
+    body.light #bg-canvas { opacity: .3; }
+    body.light body::before { opacity: .2; }
 
-.card button:hover{
-background:#333;
-}
+    /* ── KEYFRAMES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.6); opacity: .6; }
+    }
+    @keyframes rainbowMove {
+      0%   { background-position: 0%; }
+      100% { background-position: 300%; }
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-12px); }
+    }
 
-/* ICON */
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .stats { gap: 30px; }
+      .speed-dial { bottom: 20px; right: 20px; }
+    }
+  </style>
+</head>
+<body>
 
-.tool-icon{
-font-size:34px;
-margin-bottom:10px;
-}
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
-/* BADGES */
+<!-- Particle canvas -->
+<canvas id="bg-canvas"></canvas>
 
-.badge{
-position:absolute;
-top:12px;
-right:12px;
-font-size:11px;
-font-weight:700;
-padding:4px 8px;
-border-radius:6px;
-color:white;
-}
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#">
+    <img src="logo.png" alt="Rainbow Logo" onerror="this.style.display='none'" />
+    <span>Rainbow Graphic Design</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <div class="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('dark')">Dark</button>
+    <button class="mode-btn" onclick="setMode('light')">Light</button>
+    <button class="mode-btn" onclick="setMode('neon')">Neon ✦</button>
+  </div>
+</nav>
 
-.pro{background:#e11d48}
-.featured{background:#2563eb}
-.popular{background:#16a34a}
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="badge"><span></span> বাংলাদেশের সেরা ডিজাইন টুলস</div>
+    <h1>
+      <span class="line1">ডিজাইন করুন</span>
+      <span class="line2" id="morphText">যেকোনো কিছু</span>
+    </h1>
+    <p>পোস্টার, নিউজ কার্ড, ফটো কার্ড — সব তৈরি করুন<br>মাত্র কয়েক সেকেন্ডে, কোনো দক্ষতা ছাড়াই।</p>
+    <div class="hero-btns">
+      <a href="#tools" class="btn-primary">🎨 এখনই শুরু করুন</a>
+      <a href="#tools" class="btn-ghost">টুলস দেখুন ↓</a>
+    </div>
+  </div>
+</section>
 
-/* FOOTER */
+<!-- ── STATS ── -->
+<div class="stats reveal">
+  <div class="stat">
+    <div class="stat-num" data-target="6">0</div>
+    <div class="stat-label">টুলস উপলব্ধ</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" data-target="100">0</div>
+    <div class="stat-label">টেমপ্লেট</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" data-target="50">0</div>
+    <div class="stat-label">হাজার+ ডিজাইনার</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num" data-target="100">0</div>
+    <div class="stat-label">% ফ্রি</div>
+  </div>
+</div>
 
-footer{
-border-top:1px solid #eee;
-padding:30px;
-text-align:center;
-font-size:14px;
-color:#777;
-margin-top:60px;
-}
+<!-- ── TOOLS ── -->
+<section id="tools">
+  <div class="section-title reveal">
+    <div class="eyebrow">✦ আমাদের টুলস</div>
+    <h2>যা দিয়ে আপনি ডিজাইন করবেন</h2>
+  </div>
 
-/* MOBILE */
+  <div class="tools-grid">
 
-@media(max-width:768px){
+    <a href="eid-poster.html" class="tool-card">
+      <div class="card-glow" style="background:var(--c3);"></div>
+      <span class="card-icon">🌙</span>
+      <div class="card-title">Eid Poster Generator</div>
+      <div class="card-desc">সুন্দর ঈদ গ্রিটিং পোস্টার তৈরি করুন মিনিটেই।</div>
+      <span class="card-arrow" style="color:var(--c3);">খুলুন →</span>
+    </a>
 
-.hero{
-height:360px;
-}
+    <a href="bnp-eid-poster.html" class="tool-card">
+      <div class="card-glow" style="background:var(--c4);"></div>
+      <span class="card-icon">🕌</span>
+      <div class="card-title">BNP Eid Poster</div>
+      <div class="card-desc">BNP থিমড ঈদ পোস্টার সহজেই তৈরি করুন।</div>
+      <span class="card-arrow" style="color:var(--c4);">খুলুন →</span>
+    </a>
 
-.hero h1{
-font-size:28px;
-}
+    <a href="news-card.html" class="tool-card">
+      <div class="card-glow" style="background:var(--c1);"></div>
+      <span class="card-badge badge-popular">⭐ Popular</span>
+      <span class="card-icon">📰</span>
+      <div class="card-title">News Card Maker</div>
+      <div class="card-desc">আধুনিক নিউজ গ্রাফিক তৈরি করুন দ্রুত ও সহজে।</div>
+      <span class="card-arrow" style="color:var(--c1);">খুলুন →</span>
+    </a>
 
-.hero p{
-font-size:15px;
-}
+    <a href="poster-maker.html" class="tool-card">
+      <div class="card-glow" style="background:var(--c2);"></div>
+      <span class="card-icon">🖼️</span>
+      <div class="card-title">Photo Card Generator</div>
+      <div class="card-desc">স্টাইলিশ ফটো কার্ড ডিজাইন করুন নিজে নিজেই।</div>
+      <span class="card-arrow" style="color:var(--c2);">খুলুন →</span>
+    </a>
 
-.hero-btn{
-padding:12px 24px;
-font-size:14px;
-}
-
-.tools{
-padding:60px 15px;
-}
-
-}
-
-</style></head><body><header class="navbar">
-<img src="logo.png" class="nav-logo">
-</header><section class="hero"><img src="coverphoto.jpeg"><div class="hero-content"><h1>Rainbow Graphic Design</h1><p>Create Posters, News Cards & Graphics Instantly</p><button class="hero-btn" onclick="scrollToTools()">Start Creating</button>
-
-</div></section><section class="tools" id="tools"><h2>Our Tools</h2><div class="container"><div class="card">
-<div class="tool-icon">🌙</div>
-<h3>Eid Poster Generator</h3>
-<p>Create beautiful Eid greeting posters.</p>
-<a href="eid-poster.html"><button>Open Tool</button></a>
-</div><div class="card">
-<div class="tool-icon">🕌</div>
-<h3>BNP Eid Poster</h3>
-<p>Create BNP themed Eid posters easily.</p>
-<a href="bnp-eid-poster.html"><button>Open Tool</button></a>
-</div><div class="card">
-<div class="tool-icon">📰</div>
-<span class="badge popular">POPULAR</span>
-<h3>News Card Maker</h3>
-<p>Create modern news graphics.</p>
-<a href="news-card.html"><button>Open Tool</button></a>
-</div><div class="card">
-<div class="tool-icon">🖼️</div>
-<h3>Photo Card Generator</h3>
-<p>Design stylish photo cards.</p>
-<a href="poster-maker.html"><button>Open Tool</button></a>
-</div><div class="card">
-<div class="tool-icon">🎨</div>
-<span class="badge pro">PRO</span>
-<h3>Poster Maker</h3>
-<p>Advanced drag, shape & sticker editor.</p>
-<a href="poster-maker-pro.html"><button>Open Pro</button></a>
-</div><div class="card">
-<div class="tool-icon">📢</div>
-<span class="badge featured">NEW</span>
-<h3>Advertising Poster Maker</h3>
-<p>Create product advertising posters easily.</p>
-<a href="tools/advertising-poster-maker.html"><button>Open Tool</button></a>
-</div><div class="card">
-<div class="tool-icon">🖼</div>
-<h3>Frame Generator</h3>
-<p>Add creative frames to images.</p>
-<button disabled>Coming Soon</button>
-</div></div>
-</section><footer>
-© 2026 RainbowGraphicDesign | FarjanaLema | All Rights Reserved
-</footer><script>
-
-function scrollToTools(){
-document.getElementById("tools").scrollIntoView({behavior:"smooth"})
-}
-
-</script></body>
-</html>
+    <a href="poster-maker-pro.html" class="tool-card">
+      <div class="card-glow" style="background:var(--c5);"></div>
+      <span class="card-badge badge-pro">PRO</span>
+      <span class="card-icon">🎨</span>
+      <div class="card-title">Poster Maker Pro</div>
+      <div class="card-desc">Advanced drag, shape ও sticker সহ প
